@@ -1,6 +1,18 @@
 # 🌱 CropPulse: Intelligent Precision Farming Suite (ML + CV + RAG Chatbot)
 
+[![Live Website](https://img.shields.io/badge/Live%20Demo-Vercel-success?style=for-the-badge&logo=vercel)](https://crop-pulse-u14a.vercel.app)
+[![Python](https://img.shields.io/badge/Python-3.12-blue?style=for-the-badge&logo=python)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/Flask-Web%20App-lightgrey?style=for-the-badge&logo=flask)](https://crop-pulse-u14a.vercel.app)
+
+> 🚀 **Live Production Application**: [**https://crop-pulse-u14a.vercel.app**](https://crop-pulse-u14a.vercel.app)
+
 CropPulse is an advanced precision agriculture intelligence platform that combines **classical Machine Learning**, **Computer Vision foliar disease diagnosis**, and an integrated **RAG (Retrieval-Augmented Generation) agricultural assistant** to empower farmers with data-driven decision-making across crop planning, yield forecasting, soil nutrition, and crop pathology.
+
+## 🌐 Live Website
+
+- **Production URL**: [https://crop-pulse-u14a.vercel.app](https://crop-pulse-u14a.vercel.app)
+- **Deployment Platform**: Vercel Serverless Functions (`@vercel/python`)
+- **Diagnostic API Health**: [https://crop-pulse-u14a.vercel.app/api/health](https://crop-pulse-u14a.vercel.app/api/health)
 
 ## 🌟 Core Features
 
