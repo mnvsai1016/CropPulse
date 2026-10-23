@@ -6,47 +6,19 @@ let currentLeafFile = null;
 window.lastDiseaseDiagnosis = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-    const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('leafFileInput');
-    const previewContainer = document.getElementById('previewContainer');
+    const cameraBtn = document.getElementById('useCameraBtn');
+    const cameraFileInput = document.getElementById('cameraFileInput');
+    const emptyPreview = document.getElementById('emptyPreview');
+    const filledPreview = document.getElementById('filledPreview');
     const previewImg = document.getElementById('previewImg');
     const previewFileName = document.getElementById('previewFileName');
     const previewFileSize = document.getElementById('previewFileSize');
     const btnRemoveImg = document.getElementById('btnRemoveImg');
     const scanBtn = document.getElementById('scanBtn');
-    const sampleBtns = document.querySelectorAll('.sample-btn');
+    const sampleBtns = document.querySelectorAll('.sample-pill-btn');
 
-    // 1. Drop Zone Click -> Open file dialog
-    if (dropZone) {
-        dropZone.addEventListener('click', () => fileInput.click());
-
-        // Drag and drop events
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropZone.addEventListener(eventName, (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                dropZone.classList.add('dragover');
-            });
-        });
-
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                dropZone.classList.remove('dragover');
-            });
-        });
-
-        dropZone.addEventListener('drop', (e) => {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-            if (files && files.length > 0) {
-                handleFileSelection(files[0]);
-            }
-        });
-    }
-
-    // 2. Hidden file input change
+    // 1. File Input Listener
     if (fileInput) {
         fileInput.addEventListener('change', (e) => {
             if (e.target.files && e.target.files.length > 0) {
@@ -55,7 +27,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 3. Quick Sample Buttons
+    // 2. Mobile Camera Button -> Triggers native camera capture input
+    if (cameraBtn && cameraFileInput) {
+        cameraBtn.addEventListener('click', () => {
+            cameraFileInput.click();
+        });
+
+        cameraFileInput.addEventListener('change', (e) => {
+            if (e.target.files && e.target.files.length > 0) {
+                handleFileSelection(e.target.files[0]);
+            }
+        });
+    }
+
+    // 3. Quick Test Sample Buttons
     sampleBtns.forEach(btn => {
         btn.addEventListener('click', async (e) => {
             e.preventDefault();
@@ -75,15 +60,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 handleFileSelection(file);
             } catch (err) {
                 console.error('Failed to load sample image:', err);
-                alert('Could not load sample image. Please try uploading a file directly.');
+                alert('Could not load sample image. Please try uploading an image directly.');
             } finally {
-                scanBtn.innerHTML = '<i class="fas fa-microscope"></i> Diagnose Leaf Health';
+                scanBtn.innerHTML = '<i class="fas fa-search"></i> Detect Disease';
                 scanBtn.disabled = false;
             }
         });
     });
 
-    // 4. Remove Image Preview
+    // 4. Remove Selected Image
     if (btnRemoveImg) {
         btnRemoveImg.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -91,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 5. Scan & Diagnose Button
+    // 5. Detect Disease Button
     if (scanBtn) {
         scanBtn.addEventListener('click', performDiagnosis);
     }
@@ -115,20 +100,23 @@ function handleFileSelection(file) {
 
     currentLeafFile = file;
 
-    const previewContainer = document.getElementById('previewContainer');
+    const emptyPreview = document.getElementById('emptyPreview');
+    const filledPreview = document.getElementById('filledPreview');
     const previewImg = document.getElementById('previewImg');
     const previewFileName = document.getElementById('previewFileName');
     const previewFileSize = document.getElementById('previewFileSize');
     const scanBtn = document.getElementById('scanBtn');
 
-    // Read preview
+    // Read and display preview
     const reader = new FileReader();
     reader.onload = (e) => {
         previewImg.src = e.target.result;
         previewFileName.textContent = file.name;
         previewFileSize.textContent = formatBytes(file.size);
-        previewContainer.style.display = 'flex';
-        scanBtn.disabled = false;
+        
+        if (emptyPreview) emptyPreview.style.display = 'none';
+        if (filledPreview) filledPreview.style.display = 'flex';
+        if (scanBtn) scanBtn.disabled = false;
     };
     reader.readAsDataURL(file);
 }
@@ -139,15 +127,19 @@ function handleFileSelection(file) {
 function resetImageSelection() {
     currentLeafFile = null;
     const fileInput = document.getElementById('leafFileInput');
+    const cameraFileInput = document.getElementById('cameraFileInput');
     if (fileInput) fileInput.value = '';
+    if (cameraFileInput) cameraFileInput.value = '';
 
-    const previewContainer = document.getElementById('previewContainer');
-    if (previewContainer) previewContainer.style.display = 'none';
+    const emptyPreview = document.getElementById('emptyPreview');
+    const filledPreview = document.getElementById('filledPreview');
+    if (emptyPreview) emptyPreview.style.display = 'flex';
+    if (filledPreview) filledPreview.style.display = 'none';
 
     const scanBtn = document.getElementById('scanBtn');
     if (scanBtn) scanBtn.disabled = true;
 
-    document.querySelectorAll('.sample-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.sample-pill-btn').forEach(b => b.classList.remove('active'));
 }
 
 /**
@@ -162,7 +154,7 @@ async function performDiagnosis() {
     const scanBtn = document.getElementById('scanBtn');
     const origText = scanBtn.innerHTML;
     scanBtn.disabled = true;
-    scanBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing Leaf Biomarkers...';
+    scanBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing Leaf Features...';
 
     const formData = new FormData();
     formData.append('file', currentLeafFile);
@@ -198,10 +190,7 @@ function renderDiagnosisResults(res) {
     const placeholder = document.getElementById('placeholderContainer');
     const results = document.getElementById('resultsContainer');
     if (placeholder) placeholder.style.display = 'none';
-    if (results) {
-        results.classList.remove('hidden');
-        results.style.display = 'block';
-    }
+    if (results) results.style.display = 'block';
 
     // Status Banner
     const statusBanner = document.getElementById('statusBanner');

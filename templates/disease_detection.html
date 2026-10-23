@@ -1,145 +1,342 @@
 {% extends "base.html" %}
 
-{% block title %}Plant Disease Scanner & Leaf Diagnostics - CropPulse{% endblock %}
+{% block title %}Crop Disease Detection - CropPulse{% endblock %}
 
 {% block extra_css %}
 <style>
-/* Disease Detection Dedicated Styles */
-.drop-zone {
-    border: 2px dashed #a5d6a7;
-    border-radius: 14px;
-    padding: 2.25rem 1.5rem;
+/* Crop Disease Detection Custom Styling */
+.disease-hero {
+    background: linear-gradient(135deg, #16532d 0%, #1e6b37 50%, #237a44 100%);
+    position: relative;
+    padding: 3.2rem 1.5rem;
     text-align: center;
-    background: #f1f8e9;
-    cursor: pointer;
-    transition: all 0.25s ease;
+    color: #ffffff;
+    border-radius: 14px;
+    margin-bottom: 2.2rem;
+    box-shadow: 0 8px 24px rgba(22, 83, 45, 0.18);
+    overflow: hidden;
+}
+
+.disease-hero::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 100%;
+    height: 30px;
+    background: radial-gradient(ellipse at 50% 100%, rgba(255,255,255,0.12) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.disease-hero h1 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin-bottom: 0.85rem;
+    letter-spacing: -0.5px;
+    color: #ffffff;
+}
+
+.disease-hero p {
+    font-size: 1.15rem;
+    max-width: 680px;
+    margin: 0 auto;
+    opacity: 0.92;
+    line-height: 1.55;
+    color: #e8f5e9;
+}
+
+/* Two-column layout */
+.detection-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+@media (max-width: 900px) {
+    .detection-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Left Card */
+.input-card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 2rem 2.2rem;
+    border: 1px solid #eef2ed;
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.05);
+}
+
+.card-title {
+    color: #1b5e20;
+    font-size: 1.7rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
     gap: 0.6rem;
 }
 
-.drop-zone:hover, .drop-zone.dragover {
-    border-color: #2e7d32;
-    background: #e8f5e9;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(46, 125, 50, 0.12);
+.card-desc {
+    color: #555555;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
 }
 
-.drop-zone-icon {
-    font-size: 3rem;
-    color: #2e7d32;
-    margin-bottom: 0.25rem;
-    transition: transform 0.2s ease;
-}
-
-.drop-zone:hover .drop-zone-icon {
-    transform: scale(1.1);
-}
-
-.drop-zone-title {
-    font-weight: 600;
-    font-size: 1.05rem;
-    color: #1b5e20;
-}
-
-.drop-zone-subtitle {
-    font-size: 0.85rem;
-    color: #666;
-}
-
-.sample-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
-    margin-bottom: 1.25rem;
-}
-
-.sample-btn {
-    background: white;
-    border: 1px solid #c8e6c9;
-    border-radius: 8px;
-    padding: 0.6rem 0.75rem;
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: #2e7d32;
-    cursor: pointer;
-    text-align: left;
+.section-label {
     display: flex;
     align-items: center;
+    gap: 0.45rem;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #1e6b37;
+    margin-bottom: 0.5rem;
+    margin-top: 1.2rem;
+}
+
+/* Styled File Input Box */
+.file-input-wrapper {
+    background: #ffffff;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    padding: 0.45rem 0.6rem;
+    display: flex;
+    align-items: center;
+    transition: border-color 0.2s ease;
+}
+
+.file-input-wrapper:hover {
+    border-color: #1e6b37;
+}
+
+.file-input-wrapper input[type="file"] {
+    width: 100%;
+    font-size: 0.9rem;
+    color: #495057;
+    cursor: pointer;
+}
+
+/* Use Camera Button */
+.btn-use-camera {
+    width: 100%;
+    background: #236f41;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.96rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     gap: 0.5rem;
     transition: all 0.2s ease;
 }
 
-.sample-btn:hover {
-    background: #e8f5e9;
-    border-color: #4caf50;
+.btn-use-camera:hover {
+    background: #1a5632;
     transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(35, 111, 65, 0.25);
 }
 
-.sample-btn.active {
-    background: #2e7d32;
-    color: white;
-    border-color: #2e7d32;
+/* Preview Box */
+.preview-box-container {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
 }
 
-.preview-box {
-    margin-top: 1rem;
-    padding: 1rem;
-    background: #fafafa;
-    border: 1px solid #e0e0e0;
-    border-radius: 12px;
+.preview-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #adb5bd;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.preview-empty i {
+    font-size: 2.2rem;
+    margin-bottom: 0.4rem;
+    opacity: 0.75;
+}
+
+.preview-empty span {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.preview-filled {
+    width: 100%;
+    padding: 0.75rem 1rem;
     display: flex;
     align-items: center;
     gap: 1rem;
 }
 
 .preview-thumb {
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
+    width: 75px;
+    height: 75px;
     border-radius: 8px;
+    object-fit: cover;
     border: 2px solid #c8e6c9;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
-.preview-info {
+.preview-meta {
     flex: 1;
     min-width: 0;
 }
 
-.preview-name {
-    font-size: 0.92rem;
+.preview-filename {
     font-weight: 600;
-    color: #333;
+    font-size: 0.92rem;
+    color: #212529;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.preview-size {
+.preview-filesize {
     font-size: 0.8rem;
-    color: #777;
+    color: #6c757d;
     margin-top: 2px;
 }
 
-.btn-remove-preview {
+.btn-remove-file {
     background: none;
     border: none;
-    color: #d32f2f;
+    color: #dc3545;
+    font-size: 1.25rem;
     cursor: pointer;
-    font-size: 1.2rem;
-    padding: 6px;
+    padding: 0.5rem;
     border-radius: 6px;
     transition: background 0.2s ease;
 }
 
-.btn-remove-preview:hover {
+.btn-remove-file:hover {
     background: #ffebee;
 }
 
-/* Diagnosis Result Badges */
+/* Primary Detect Button */
+.btn-detect {
+    width: 100%;
+    background: #236f41;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.9rem 1.5rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    transition: all 0.2s ease;
+}
+
+.btn-detect:hover:not(:disabled) {
+    background: #1a5632;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(35, 111, 65, 0.28);
+}
+
+.btn-detect:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    background: #6c757d;
+}
+
+/* Sample Leaf Quick Picker (discreet) */
+.sample-quick-picker {
+    margin-top: 1.2rem;
+    padding-top: 1rem;
+    border-top: 1px dashed #e0e0e0;
+}
+
+.sample-pills {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.45rem;
+    margin-top: 0.4rem;
+}
+
+.sample-pill-btn {
+    background: #ffffff;
+    border: 1px solid #d4edda;
+    border-radius: 6px;
+    padding: 0.45rem 0.6rem;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #1e6b37;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: all 0.15s ease;
+}
+
+.sample-pill-btn:hover {
+    background: #e8f5e9;
+    border-color: #236f41;
+}
+
+.sample-pill-btn.active {
+    background: #236f41;
+    color: #ffffff;
+    border-color: #236f41;
+}
+
+/* Right Card (Results & Placeholder) */
+.result-card-container {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 2rem 2.2rem;
+    border: 1px solid #eef2ed;
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.05);
+    min-height: 480px;
+}
+
+/* Placeholder State */
+.result-placeholder {
+    min-height: 440px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+}
+
+.leaf-placeholder-svg {
+    width: 85px;
+    height: 85px;
+    margin-bottom: 1.5rem;
+    opacity: 0.4;
+    fill: #9e9e9e;
+}
+
+.result-placeholder p {
+    color: #6c757d;
+    font-size: 1rem;
+    max-width: 330px;
+    line-height: 1.55;
+    margin: 0 auto;
+}
+
+/* Active Results Styling */
 .status-banner {
     padding: 1.25rem;
     border-radius: 12px;
@@ -165,32 +362,24 @@
     line-height: 1;
 }
 
-.status-banner.healthy .status-banner-icon {
-    color: #2e7d32;
-}
-
-.status-banner.diseased .status-banner-icon {
-    color: #e65100;
-}
+.status-banner.healthy .status-banner-icon { color: #2e7d32; }
+.status-banner.diseased .status-banner-icon { color: #e65100; }
 
 .diagnosis-title {
-    font-size: 1.4rem;
+    font-size: 1.45rem;
     font-weight: 700;
     color: #1b5e20;
     margin-bottom: 0.25rem;
 }
 
-.status-banner.diseased .diagnosis-title {
-    color: #b71c1c;
-}
+.status-banner.diseased .diagnosis-title { color: #b71c1c; }
 
 .diagnosis-meta {
     font-size: 0.88rem;
-    color: #555;
+    color: #555555;
     line-height: 1.4;
 }
 
-/* Severity Pill */
 .severity-pill {
     display: inline-block;
     padding: 3px 10px;
@@ -202,24 +391,12 @@
     margin-top: 4px;
 }
 
-.severity-pill.none {
-    background: #e8f5e9;
-    color: #2e7d32;
-}
+.severity-pill.none { background: #e8f5e9; color: #2e7d32; }
+.severity-pill.moderate { background: #fff8e1; color: #f57f17; }
+.severity-pill.high { background: #ffebee; color: #c62828; }
 
-.severity-pill.moderate {
-    background: #fff8e1;
-    color: #f57f17;
-}
-
-.severity-pill.high {
-    background: #ffebee;
-    color: #c62828;
-}
-
-/* Confidence Bar */
 .confidence-box {
-    background: white;
+    background: #fafafa;
     padding: 1rem 1.25rem;
     border-radius: 10px;
     border: 1px solid #e0e0e0;
@@ -232,7 +409,7 @@
     justify-content: space-between;
     font-size: 0.88rem;
     font-weight: 600;
-    color: #333;
+    color: #333333;
     margin-bottom: 0.5rem;
 }
 
@@ -251,15 +428,14 @@
     transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Treatment Sections */
 .remedy-card {
-    background: white;
+    background: #ffffff;
     border-radius: 10px;
     border: 1px solid #e0e0e0;
     padding: 1.1rem 1.25rem;
     margin-bottom: 1rem;
     text-align: left;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.03);
 }
 
 .remedy-card h4 {
@@ -277,11 +453,10 @@
 
 .remedy-text {
     font-size: 0.9rem;
-    color: #444;
+    color: #444444;
     line-height: 1.5;
 }
 
-/* Candidates List */
 .candidates-list {
     margin-top: 0.75rem;
     display: flex;
@@ -299,194 +474,172 @@
     border-radius: 6px;
 }
 
-.candidate-name {
-    color: #333;
-    font-weight: 500;
-}
-
-.candidate-score {
-    color: #666;
-    font-weight: 600;
-}
-
-/* Tip Card */
-.tips-box {
-    margin-top: 1.5rem;
-    padding: 1rem 1.25rem;
-    background: #f1f8e9;
-    border-left: 4px solid #4caf50;
-    border-radius: 8px;
-    text-align: left;
-}
-
-.tips-box h4 {
-    font-size: 0.92rem;
-    color: #2e7d32;
-    margin-bottom: 0.4rem;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-}
-
-.tips-box ul {
-    margin-left: 1.2rem;
-    font-size: 0.82rem;
-    color: #555;
-    line-height: 1.5;
-}
+.candidate-name { color: #333333; font-weight: 500; }
+.candidate-score { color: #666666; font-weight: 600; }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="container">
-    <!-- Hero Header -->
-    <div class="hero" style="margin-bottom: 2rem; padding: 2rem 0;">
-        <div class="hero-content">
-            <h1 style="font-size: 2.5rem;">Plant Disease Scanner & Leaf Diagnostics</h1>
-            <p>Classical Computer Vision & Machine Learning foliar analysis for rapid crop pathogen detection</p>
-        </div>
+    <!-- Header Banner -->
+    <div class="disease-hero">
+        <h1>Crop Disease Detection</h1>
+        <p>Upload a leaf image or scan using your mobile camera to detect plant diseases with our machine learning model.</p>
     </div>
 
-    <div class="two-column">
-        <!-- Left Column: Image Upload & Controls -->
-        <div class="form-container">
-            <h2 style="color: var(--deep-green); margin-bottom: 1rem; font-size: 1.75rem;">
-                <i class="fas fa-camera"></i> Leaf Photo Analysis
+    <!-- Main Two-Column Layout -->
+    <div class="detection-grid">
+        <!-- Left Column: Leaf Image Input Card -->
+        <div class="input-card">
+            <h2 class="card-title">
+                <i class="fas fa-camera"></i> Leaf Image Input
             </h2>
+            <p class="card-desc">
+                Choose an existing photo from your gallery or scan the leaf directly using your mobile camera. Supported formats: JPG, PNG, WEBP.
+            </p>
 
-            <!-- Quick Sample Picker -->
-            <div style="margin-bottom: 1.25rem;">
-                <label class="form-label" style="margin-bottom: 0.5rem; font-size: 0.88rem; color: var(--text-secondary);">
-                    <i class="fas fa-magic"></i> Quick Test: Choose A Verified Sample Leaf
+            <!-- 1. Upload Leaf Image -->
+            <label class="section-label" for="leafFileInput">
+                <i class="fas fa-upload"></i> Upload Leaf Image
+            </label>
+            <div class="file-input-wrapper">
+                <input type="file" id="leafFileInput" accept="image/jpeg,image/png,image/webp,image/jpg">
+            </div>
+
+            <!-- 2. Scan from Mobile Camera -->
+            <label class="section-label" style="margin-top: 1.2rem;">
+                <i class="fas fa-mobile-alt"></i> Scan from Mobile Camera
+            </label>
+            <button type="button" id="useCameraBtn" class="btn-use-camera">
+                <i class="fas fa-camera"></i> Use Camera
+            </button>
+            <!-- Native Mobile Camera Trigger (hidden) -->
+            <input type="file" id="cameraFileInput" accept="image/*" capture="environment" style="display: none;">
+
+            <!-- 3. Preview Box -->
+            <label class="section-label" style="margin-top: 1.2rem;">
+                <i class="fas fa-image"></i> Preview
+            </label>
+            <div class="preview-box-container">
+                <!-- Empty State -->
+                <div id="emptyPreview" class="preview-empty">
+                    <i class="far fa-image"></i>
+                    <span>No image selected yet.</span>
+                </div>
+
+                <!-- Filled State -->
+                <div id="filledPreview" class="preview-filled" style="display: none;">
+                    <img id="previewImg" src="" alt="Selected leaf preview" class="preview-thumb">
+                    <div class="preview-meta">
+                        <div id="previewFileName" class="preview-filename">leaf_sample.jpg</div>
+                        <div id="previewFileSize" class="preview-filesize">0 KB</div>
+                    </div>
+                    <button type="button" id="btnRemoveImg" class="btn-remove-file" title="Remove photo">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 4. Primary Detect Button -->
+            <button type="button" id="scanBtn" class="btn-detect" disabled>
+                <i class="fas fa-search"></i> Detect Disease
+            </button>
+
+            <!-- 5. Quick Test Samples (Clean & Discreet) -->
+            <div class="sample-quick-picker">
+                <label class="section-label" style="margin-top: 0; font-size: 0.85rem; color: #666;">
+                    <i class="fas fa-magic"></i> Quick-Test With Verified Sample Leaves:
                 </label>
-                <div class="sample-grid">
-                    <button type="button" class="sample-btn" data-src="{{ url_for('static', filename='images/samples/apple_scab.jpg') }}" data-name="Apple Scab Sample">
+                <div class="sample-pills">
+                    <button type="button" class="sample-pill-btn" data-src="{{ url_for('static', filename='images/samples/apple_scab.jpg') }}" data-name="Apple Scab Sample">
                         🍎 Apple Scab
                     </button>
-                    <button type="button" class="sample-btn" data-src="{{ url_for('static', filename='images/samples/corn_rust.jpg') }}" data-name="Corn Rust Sample">
+                    <button type="button" class="sample-pill-btn" data-src="{{ url_for('static', filename='images/samples/corn_rust.jpg') }}" data-name="Corn Rust Sample">
                         🌽 Corn Common Rust
                     </button>
-                    <button type="button" class="sample-btn" data-src="{{ url_for('static', filename='images/samples/grape_black_rot.jpg') }}" data-name="Grape Black Rot Sample">
+                    <button type="button" class="sample-pill-btn" data-src="{{ url_for('static', filename='images/samples/grape_black_rot.jpg') }}" data-name="Grape Black Rot Sample">
                         🍇 Grape Black Rot
                     </button>
-                    <button type="button" class="sample-btn" data-src="{{ url_for('static', filename='images/samples/apple_healthy.jpg') }}" data-name="Healthy Leaf Sample">
-                        🌿 Healthy Apple Leaf
+                    <button type="button" class="sample-pill-btn" data-src="{{ url_for('static', filename='images/samples/apple_healthy.jpg') }}" data-name="Healthy Leaf Sample">
+                        🌿 Healthy Leaf
                     </button>
                 </div>
             </div>
-
-            <!-- Drag and Drop Upload Area -->
-            <div id="dropZone" class="drop-zone">
-                <i class="fas fa-cloud-upload-alt drop-zone-icon"></i>
-                <div class="drop-zone-title">Upload Leaf Image</div>
-                <div class="drop-zone-subtitle">Drag and drop file here, or click to browse</div>
-                <div style="font-size: 0.78rem; color: #888;">Supports JPG, PNG, WEBP (Max 10MB)</div>
-            </div>
-
-            <!-- Hidden File Input -->
-            <input type="file" id="leafFileInput" accept="image/jpeg,image/png,image/webp,image/jpg" style="display: none;">
-
-            <!-- Image Preview Box -->
-            <div id="previewContainer" class="preview-box" style="display: none;">
-                <img id="previewImg" src="" alt="Selected leaf preview" class="preview-thumb">
-                <div class="preview-info">
-                    <div id="previewFileName" class="preview-name">leaf_sample.jpg</div>
-                    <div id="previewFileSize" class="preview-size">0 KB</div>
-                </div>
-                <button type="button" id="btnRemoveImg" class="btn-remove-preview" title="Remove photo">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-
-            <!-- Submit Action -->
-            <button type="button" id="scanBtn" class="btn-primary" style="margin-top: 1.5rem;" disabled>
-                <i class="fas fa-microscope"></i> Diagnose Leaf Health
-            </button>
-
-            <!-- Leaf Photography Best Practices -->
-            <div class="tips-box">
-                <h4><i class="fas fa-lightbulb"></i> Guidelines for Maximum Accuracy</h4>
-                <ul>
-                    <li>Take a clear, sharp close-up of a <strong>single leaf</strong>.</li>
-                    <li>Ensure uniform daylight without excessive direct flash or harsh shadows.</li>
-                    <li>Place leaf against a neutral, clean background whenever possible.</li>
-                </ul>
-            </div>
         </div>
 
-        <!-- Right Column: Results Section -->
-        <!-- Active Diagnosis Results -->
-        <div id="resultsContainer" class="result-container hidden">
-            <!-- Dynamic Status Banner -->
-            <div id="statusBanner" class="status-banner diseased">
-                <div class="status-banner-icon">
-                    <i id="statusIcon" class="fas fa-exclamation-triangle"></i>
-                </div>
-                <div style="flex: 1;">
-                    <div id="diagnosisTitle" class="diagnosis-title">Apple Scab</div>
-                    <div id="diagnosisCropMeta" class="diagnosis-meta">
-                        <strong>Crop:</strong> <span id="cropNameText">Apple</span> &bull; 
-                        <strong>Pathogen:</strong> <span id="pathogenText">Fungal</span>
+        <!-- Right Column: Results Card -->
+        <div class="result-card-container">
+            <!-- Placeholder State (Before Scan) -->
+            <div id="placeholderContainer" class="result-placeholder">
+                <!-- SVG Leaf Silhouette Icon -->
+                <svg class="leaf-placeholder-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M58.7 5.3C42.4 3.7 27.6 10.9 19.3 22.8c-7.3 10.5-8.2 24.3-1.8 35.4l.6 1 .9-.7c10.4-8.6 15.3-21.7 13.5-35.3 10.9 4.3 22.8 1.4 28.5-4.5 1-1 1.2-2.5.4-3.6-.6-.7-1.7-1.1-2.7-1.1-.3 0-.6 0-.9.1-4.7 1.2-13.8 2.3-21.8-3.4C40.6 8.1 49.8 6.4 58.7 5.3zM21.5 54.4C17.2 44.9 18.2 33 24.6 23.9c6.6-9.4 18.1-15.4 30.7-15.6-7.8 2-16 4.9-20.7 9.8-.7.7-.9 1.7-.5 2.6.4.9 1.3 1.5 2.3 1.5.2 0 .4 0 .6-.1 6.9-2 15.1-1.3 20.3 3.9-4.8 4.2-14.7 6.3-23.7 2-1-.5-2.2-.2-2.8.7-.6.9-.5 2.1.3 2.8 4.5 4.1 8 10.6 8.7 18-5.7-1.7-13.8-1.5-18.4 4.9z"/>
+                </svg>
+                <p>Upload or scan a leaf image and click "Detect Disease" to see predictions and treatment advice.</p>
+            </div>
+
+            <!-- Active Diagnostic Results (After Scan) -->
+            <div id="resultsContainer" class="result-active" style="display: none;">
+                <!-- Status Banner -->
+                <div id="statusBanner" class="status-banner diseased">
+                    <div class="status-banner-icon">
+                        <i id="statusIcon" class="fas fa-exclamation-triangle"></i>
                     </div>
-                    <span id="severityPill" class="severity-pill moderate">Moderate Severity</span>
+                    <div style="flex: 1;">
+                        <div id="diagnosisTitle" class="diagnosis-title">Condition Name</div>
+                        <div id="diagnosisCropMeta" class="diagnosis-meta">
+                            <strong>Crop:</strong> <span id="cropNameText">-</span> &bull; 
+                            <strong>Pathogen:</strong> <span id="pathogenText">-</span>
+                        </div>
+                        <span id="severityPill" class="severity-pill moderate">Moderate Severity</span>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Confidence Meter -->
-            <div class="confidence-box">
-                <div class="confidence-header">
-                    <span>Diagnostic Confidence</span>
-                    <span id="confidenceValueText">94.5%</span>
+                <!-- Confidence Meter -->
+                <div class="confidence-box">
+                    <div class="confidence-header">
+                        <span>Diagnostic Confidence</span>
+                        <span id="confidenceValueText">95.0%</span>
+                    </div>
+                    <div class="confidence-track">
+                        <div id="confidenceBarFill" class="confidence-fill" style="width: 95%;"></div>
+                    </div>
                 </div>
-                <div class="confidence-track">
-                    <div id="confidenceBarFill" class="confidence-fill" style="width: 94.5%;"></div>
+
+                <!-- Pathology Overview -->
+                <div class="remedy-card">
+                    <h4 style="color: #37474f;"><i class="fas fa-file-medical-alt"></i> Clinical Pathology Overview</h4>
+                    <p id="diagnosisDescription" class="remedy-text">-</p>
                 </div>
-            </div>
 
-            <!-- Disease Symptom Description -->
-            <div class="remedy-card">
-                <h4 style="color: #37474f;"><i class="fas fa-file-medical-alt"></i> Clinical Pathology Overview</h4>
-                <p id="diagnosisDescription" class="remedy-text">Description loading...</p>
-            </div>
+                <!-- Organic Remedies -->
+                <div class="remedy-card remedy-organic">
+                    <h4><i class="fas fa-leaf"></i> Organic & Biological Remedies</h4>
+                    <p id="organicTreatmentText" class="remedy-text">-</p>
+                </div>
 
-            <!-- Organic Treatment -->
-            <div class="remedy-card remedy-organic">
-                <h4><i class="fas fa-leaf"></i> Organic & Biological Remedies</h4>
-                <p id="organicTreatmentText" class="remedy-text">-</p>
-            </div>
+                <!-- Chemical Controls -->
+                <div class="remedy-card remedy-chemical">
+                    <h4><i class="fas fa-flask"></i> Chemical & Fungicidal Controls</h4>
+                    <p id="chemicalTreatmentText" class="remedy-text">-</p>
+                </div>
 
-            <!-- Chemical Treatment -->
-            <div class="remedy-card remedy-chemical">
-                <h4><i class="fas fa-flask"></i> Chemical & Fungicidal Controls</h4>
-                <p id="chemicalTreatmentText" class="remedy-text">-</p>
-            </div>
+                <!-- Preventative Cultural Practices -->
+                <div class="remedy-card remedy-prevention">
+                    <h4><i class="fas fa-shield-alt"></i> Preventative Cultural Practices</h4>
+                    <p id="preventionText" class="remedy-text">-</p>
+                </div>
 
-            <!-- Prevention Strategies -->
-            <div class="remedy-card remedy-prevention">
-                <h4><i class="fas fa-shield-alt"></i> Preventative Cultural Practices</h4>
-                <p id="preventionText" class="remedy-text">-</p>
-            </div>
+                <!-- Alternative Candidates -->
+                <div class="remedy-card" style="background: #fafafa;">
+                    <h4 style="color: #616161; font-size: 0.92rem;"><i class="fas fa-chart-bar"></i> Ensemble Probability Distribution</h4>
+                    <div id="candidatesList" class="candidates-list"></div>
+                </div>
 
-            <!-- Alternative Model Candidates -->
-            <div class="remedy-card" style="background: #fafafa;">
-                <h4 style="color: #616161; font-size: 0.92rem;"><i class="fas fa-chart-bar"></i> Ensemble Probability Distribution</h4>
-                <div id="candidatesList" class="candidates-list"></div>
-            </div>
-
-            <!-- Ask CropPulse Chatbot Button -->
-            <button type="button" id="askDiseaseChatBtn" class="btn-primary btn-chatbot-accent" style="margin-top: 1rem;" onclick="askAssistantAboutDisease()">
-                <i class="fas fa-comments"></i> Ask CropPulse Assistant About This Disease
-            </button>
-        </div>
-
-        <!-- Placeholder when no scan performed -->
-        <div id="placeholderContainer" class="result-container" style="display: flex; align-items: center; justify-content: center; min-height: 440px;">
-            <div style="text-align: center; color: var(--medium-gray); padding: 2rem;">
-                <i class="fas fa-microscope" style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.35; color: var(--deep-green);"></i>
-                <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--dark-gray);">Awaiting Foliar Scan</h3>
-                <p style="font-size: 0.95rem; max-width: 320px; margin: 0 auto; line-height: 1.5;">
-                    Upload a leaf photograph or select one of the quick test samples on the left to diagnose health status and obtain treatment advice.
-                </p>
+                <!-- Chatbot Action Button -->
+                <button type="button" id="askDiseaseChatBtn" class="btn-detect" style="margin-top: 1rem; background: #1b5e20;" onclick="askAssistantAboutDisease()">
+                    <i class="fas fa-comments"></i> Ask CropPulse Assistant About This Disease
+                </button>
             </div>
         </div>
     </div>
