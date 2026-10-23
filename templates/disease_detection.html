@@ -312,55 +312,6 @@
     background: #6c757d;
 }
 
-/* Sample Leaf Quick Picker */
-.sample-quick-picker {
-    margin-top: 1.2rem;
-    padding-top: 1rem;
-    border-top: 1px dashed #e0e0e0;
-    width: 100%;
-    max-width: 100%;
-    overflow: hidden;
-}
-
-.sample-pills {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.45rem;
-    margin-top: 0.4rem;
-}
-
-.sample-pill-btn {
-    background: #ffffff;
-    border: 1px solid #d4edda;
-    border-radius: 6px;
-    padding: 0.45rem 0.6rem;
-    font-size: 0.82rem;
-    font-weight: 500;
-    color: #1e6b37;
-    cursor: pointer;
-    text-align: left;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-width: 0;
-    max-width: 100%;
-    transition: all 0.15s ease;
-}
-
-.sample-pill-btn:hover {
-    background: #e8f5e9;
-    border-color: #236f41;
-}
-
-.sample-pill-btn.active {
-    background: #236f41;
-    color: #ffffff;
-    border-color: #236f41;
-}
-
 /* Placeholder State */
 .result-placeholder {
     min-height: 440px;
@@ -609,27 +560,6 @@
             <button type="button" id="scanBtn" class="btn-detect" disabled>
                 <i class="fas fa-search"></i> Detect Disease
             </button>
-
-            <!-- 5. Quick Test Samples (Clean & Discreet) -->
-            <div class="sample-quick-picker">
-                <label class="section-label" style="margin-top: 0; font-size: 0.85rem; color: #666;">
-                    <i class="fas fa-magic"></i> Quick-Test With Verified Sample Leaves:
-                </label>
-                <div class="sample-pills">
-                    <button type="button" class="sample-pill-btn" data-src="{{ url_for('static', filename='images/samples/apple_scab.jpg') }}" data-name="Apple Scab Sample">
-                        🍎 Apple Scab
-                    </button>
-                    <button type="button" class="sample-pill-btn" data-src="{{ url_for('static', filename='images/samples/corn_rust.jpg') }}" data-name="Corn Rust Sample">
-                        🌽 Corn Common Rust
-                    </button>
-                    <button type="button" class="sample-pill-btn" data-src="{{ url_for('static', filename='images/samples/grape_black_rot.jpg') }}" data-name="Grape Black Rot Sample">
-                        🍇 Grape Black Rot
-                    </button>
-                    <button type="button" class="sample-pill-btn" data-src="{{ url_for('static', filename='images/samples/apple_healthy.jpg') }}" data-name="Healthy Leaf Sample">
-                        🌿 Healthy Leaf
-                    </button>
-                </div>
-            </div>
         </div>
 
         <!-- Right Column: Results Card -->

@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const previewFileSize = document.getElementById('previewFileSize');
     const btnRemoveImg = document.getElementById('btnRemoveImg');
     const scanBtn = document.getElementById('scanBtn');
-    const sampleBtns = document.querySelectorAll('.sample-pill-btn');
 
     // 1. Custom File Picker Click -> triggers hidden file input
     if (customFilePicker && fileInput) {
@@ -60,35 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 3. Quick Test Sample Buttons
-    sampleBtns.forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-            e.preventDefault();
-            const src = btn.getAttribute('data-src');
-            const name = btn.getAttribute('data-name') || 'sample_leaf.jpg';
-
-            sampleBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            try {
-                scanBtn.disabled = true;
-                scanBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading Sample...';
-
-                const response = await fetch(src);
-                const blob = await response.blob();
-                const file = new File([blob], name, { type: blob.type || 'image/jpeg' });
-                handleFileSelection(file);
-            } catch (err) {
-                console.error('Failed to load sample image:', err);
-                alert('Could not load sample image. Please try uploading an image directly.');
-            } finally {
-                scanBtn.innerHTML = '<i class="fas fa-search"></i> Detect Disease';
-                scanBtn.disabled = false;
-            }
-        });
-    });
-
-    // 4. Remove Selected Image
+    // 3. Remove Selected Image
     if (btnRemoveImg) {
         btnRemoveImg.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -186,8 +157,6 @@ function resetImageSelection() {
 
     const scanBtn = document.getElementById('scanBtn');
     if (scanBtn) scanBtn.disabled = true;
-
-    document.querySelectorAll('.sample-pill-btn').forEach(b => b.classList.remove('active'));
 }
 
 /**
