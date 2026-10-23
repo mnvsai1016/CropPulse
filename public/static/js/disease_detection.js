@@ -6,6 +6,11 @@ let currentLeafFile = null;
 window.lastDiseaseDiagnosis = null;
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Set page context for CropPulse Assistant
+    if (!window.chatContext) {
+        window.chatContext = { feature: "disease_detection" };
+    }
+
     const fileInput = document.getElementById('leafFileInput');
     const customFilePicker = document.getElementById('customFilePicker');
     const btnBrowseFile = document.getElementById('btnBrowseFile');
@@ -203,6 +208,16 @@ async function performDiagnosis() {
  */
 function renderDiagnosisResults(res) {
     window.lastDiseaseDiagnosis = res;
+    window.chatContext = {
+        feature: "disease_detection",
+        crop: res.crop,
+        disease: res.disease_name,
+        severity: res.severity,
+        pathogen_type: res.pathogen_type,
+        organic_treatment: res.organic_treatment,
+        chemical_treatment: res.chemical_treatment,
+        prevention: res.prevention
+    };
 
     const placeholder = document.getElementById('placeholderContainer');
     const results = document.getElementById('resultsContainer');
@@ -280,6 +295,18 @@ function renderDiagnosisResults(res) {
  */
 function askAssistantAboutDisease() {
     const res = window.lastDiseaseDiagnosis;
+    if (res) {
+        window.chatContext = {
+            feature: "disease_detection",
+            crop: res.crop,
+            disease: res.disease_name,
+            severity: res.severity,
+            pathogen_type: res.pathogen_type,
+            organic_treatment: res.organic_treatment,
+            chemical_treatment: res.chemical_treatment,
+            prevention: res.prevention
+        };
+    }
     const prompt = res 
         ? `I just scanned a ${res.crop} leaf showing signs of "${res.disease_name}". Can you explain the treatment schedule and preventive management steps?`
         : `How can I identify and treat foliar crop fungal diseases?`;

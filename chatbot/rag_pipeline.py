@@ -71,6 +71,11 @@ def retrieve_context(query: str, prediction_context: dict = None, k: int = 4) ->
             fertilizer     = prediction_context.get("fertilizer", "")
             enriched_query = f"{fertilizer} fertilizer application soil health {query}"
 
+        elif feature == "disease_detection":
+            crop           = prediction_context.get("crop", "")
+            disease        = prediction_context.get("disease", "")
+            enriched_query = f"{crop} {disease} plant foliar fungal disease symptoms treatment fungicide management {query}"
+
     docs = vectorstore.similarity_search(enriched_query, k=k)
 
     context_parts = []

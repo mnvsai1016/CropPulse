@@ -114,17 +114,17 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-##  Environment Variables
+## ⚙️ Environment Variables
 
-Create a `.env` file in the project root (or set env vars in your OS/deployment):
+CropPulse works out of the box with built-in ML and diagnostic advisory models. To enable open-ended generative AI conversations with Google Gemma via OpenRouter, create a `.env` file in the project root (or set in Vercel project environment variables):
 
 ```env
-# Required for the chatbot (OpenRouter)
-OPENROUTER_API_KEY=your_key_here
-
-# Optional (only used by chatbot/check_models.py)
-GOOGLE_API_KEY=your_key_here
+# Optional: Enables full generative AI conversations with Google Gemma 3
+# Free API key (no credit card): https://openrouter.ai/keys
+OPENROUTER_API_KEY=your_openrouter_api_key_here
 ```
+
+> **Note**: Even without an API key, CropPulse includes an autonomous **Agronomic Advisory Engine** that delivers treatment schedules, organic/chemical remedies, and fertilizer guidance out of the box.
 
 ##  Required Assets (Important)
 
