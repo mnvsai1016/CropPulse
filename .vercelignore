@@ -1,0 +1,24 @@
+# Test files and reports
+tests/
+
+# Knowledge base PDFs (used for offline indexing, not web runtime)
+knowledge_base/
+raw_data/
+Fertilizer_Prediction.csv
+
+# Local tools and deployment scripts
+Dockerfile
+render.yaml
+setup_git_lfs.sh
+startup.sh
+sync_with_github.ps1
+check_deployment.py
+*.md
+
+# Git & environments
+.git/
+.gitignore
+venv/
+env/
+__pycache__/
+*.pyc

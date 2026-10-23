@@ -1,10 +1,15 @@
 import os
 from dotenv import load_dotenv
-from huggingface_hub import hf_hub_download
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_community.vectorstores import FAISS
 
 load_dotenv()
+
+try:
+    from huggingface_hub import hf_hub_download
+    from langchain_huggingface import HuggingFaceEmbeddings
+    from langchain_community.vectorstores import FAISS
+    HAS_VECTOR_DB = True
+except Exception:
+    HAS_VECTOR_DB = False
 
 VECTOR_DB_REPO_ID = "neerajbodinapalli/agri-guide-vector-db"
 _vectorstore       = None
@@ -12,6 +17,9 @@ _vectorstore       = None
 
 def get_vectorstore():
     global _vectorstore
+    if not HAS_VECTOR_DB:
+        return None
+
     if _vectorstore is None:
         print("Loading vector database (first request)...")
         embeddings = HuggingFaceEmbeddings(
@@ -42,6 +50,8 @@ def get_vectorstore():
 
 def retrieve_context(query: str, prediction_context: dict = None, k: int = 4) -> tuple[str, list[str]]:
     vectorstore = get_vectorstore()
+    if vectorstore is None:
+        return "", []
 
     enriched_query = query
 
