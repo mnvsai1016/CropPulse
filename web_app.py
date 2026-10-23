@@ -247,11 +247,16 @@ def parse_numeric(
     if np.isnan(num) or np.isinf(num):
         raise ValueError(f"Field '{field_name}' must be a finite number")
 
+    min_disp = (int(min_val) if float(min_val).is_integer() else min_val) if min_val is not None else None
+    max_disp = (int(max_val) if float(max_val).is_integer() else max_val) if max_val is not None else None
+
     if min_val is not None and num < min_val:
-        raise ValueError(f"Field '{field_name}' must be >= {min_val}")
+        range_str = f" ({field_name} must be between {min_disp} and {max_disp})" if max_val is not None else ""
+        raise ValueError(f"Field '{field_name}' must be >= {min_val}{range_str}")
 
     if max_val is not None and num > max_val:
-        raise ValueError(f"Field '{field_name}' must be <= {max_val}")
+        range_str = f" ({field_name} must be between {min_disp} and {max_disp})" if min_val is not None else ""
+        raise ValueError(f"Field '{field_name}' must be <= {max_val}{range_str}")
 
     return num
 
@@ -306,12 +311,25 @@ def predict_crop(n, p, k, temperature, humidity, ph, rainfall):
         probabilities = crop_model.predict_proba(input_array)[0]
         confidence = float(np.max(probabilities) * 100)
         
+        # Compute secondary alternatives (top runner-up classes)
+        top_indices = np.argsort(probabilities)[::-1]
+        alternatives = []
+        for idx in top_indices[1:4]:
+            alt_crop = crop_label_encoder.inverse_transform([idx])[0]
+            alt_conf = float(probabilities[idx] * 100)
+            if alt_conf >= 0.1:
+                alternatives.append({
+                    'crop': alt_crop,
+                    'confidence': round(alt_conf, 2)
+                })
+
         # Get soil health advice
         advice = generate_soil_advice(float(n), float(p), float(k), float(ph))
         
         return {
             'crop': crop_name,
             'confidence': round(confidence, 2),
+            'alternatives': alternatives,
             'advice': advice
         }
     except Exception as e:
@@ -603,7 +621,9 @@ def api_predict_crop():
     try:
         data = request.get_json(silent=True)
         if data is None or not isinstance(data, dict):
-            return jsonify({'success': False, 'error': 'Invalid or missing JSON payload'}), 400
+            return jsonify({'success': False, 'error': 'Invalid or missing JSON payload (Bad Request)'}), 400
+        if len(data) == 0:
+            return jsonify({'success': False, 'error': 'No JSON data provided (Bad Request)'}), 400
             
         # Check if models are loaded
         if crop_model is None or crop_label_encoder is None:
@@ -611,11 +631,11 @@ def api_predict_crop():
 
         n = parse_numeric(data.get('n'), 'Nitrogen (N)', min_val=0.0, max_val=300.0)
         p = parse_numeric(data.get('p'), 'Phosphorus (P)', min_val=0.0, max_val=300.0)
-        k = parse_numeric(data.get('k'), 'Potassium (K)', min_val=0.0, max_val=300.0)
-        temperature = parse_numeric(data.get('temperature'), 'Temperature', min_val=-20.0, max_val=65.0)
-        humidity = parse_numeric(data.get('humidity'), 'Humidity', min_val=0.0, max_val=100.0)
-        ph = parse_numeric(data.get('ph', 7), 'pH', min_val=0.0, max_val=14.0, default=7.0)
-        rainfall = parse_numeric(data.get('rainfall'), 'Rainfall', min_val=0.0, max_val=2000.0)
+        k = parse_numeric(data.get('k'), 'Potassium (K)', min_val=0.0, max_val=300.0, default=40.0)
+        temperature = parse_numeric(data.get('temperature'), 'Temperature', min_val=-20.0, max_val=65.0, default=25.0)
+        humidity = parse_numeric(data.get('humidity'), 'Humidity', min_val=0.0, max_val=100.0, default=70.0)
+        ph = parse_numeric(data.get('ph'), 'pH', min_val=0.0, max_val=14.0, default=7.0)
+        rainfall = parse_numeric(data.get('rainfall'), 'Rainfall', min_val=0.0, max_val=2000.0, default=100.0)
         
         result = predict_crop(n, p, k, temperature, humidity, ph, rainfall)
         return jsonify({'success': True, 'result': result})
@@ -680,10 +700,8 @@ def api_predict_fertilizer():
         crop_type = str(data.get('cropType') or data.get('crop_type') or '').strip()
         
         # Validate required fields
-        if not soil_type:
-            return jsonify({'success': False, 'error': 'Soil Type is required'}), 400
-        if not crop_type:
-            return jsonify({'success': False, 'error': 'Crop Type is required'}), 400
+        if not soil_type or not crop_type:
+            return jsonify({'success': False, 'error': 'Soil Type and Crop Type are required'}), 400
 
         temperature = parse_numeric(data.get('temperature'), 'Temperature', min_val=-20.0, max_val=65.0)
         humidity = parse_numeric(data.get('humidity'), 'Humidity', min_val=0.0, max_val=100.0)
@@ -714,6 +732,7 @@ def api_test():
 
 
 @app.route('/api/predict-disease', methods=['POST'])
+@app.route('/api/detect-disease', methods=['POST'])
 def api_predict_disease():
     """API endpoint for classical CV + ML plant leaf disease diagnosis."""
     try:

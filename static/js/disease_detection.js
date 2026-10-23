@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const previewFileSize = document.getElementById('previewFileSize');
     const btnRemoveImg = document.getElementById('btnRemoveImg');
     const scanBtn = document.getElementById('scanBtn');
+    const askDiseaseChatBtn = document.getElementById('askDiseaseChatBtn');
 
     // 1. Custom File Picker Click -> triggers hidden file input
     if (customFilePicker && fileInput) {
@@ -72,11 +73,79 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // 4. Drag and Drop Support
+    setupDragAndDrop();
+
     // 5. Detect Disease Button
     if (scanBtn) {
         scanBtn.addEventListener('click', performDiagnosis);
     }
+
+    // 6. Chatbot Inquire Button
+    if (askDiseaseChatBtn) {
+        askDiseaseChatBtn.addEventListener('click', askAssistantAboutDisease);
+    }
 });
+
+/**
+ * Configure Drag-and-Drop file handling on file picker and preview container
+ */
+function setupDragAndDrop() {
+    const dropTargets = [
+        document.getElementById('customFilePicker'),
+        document.getElementById('previewBoxContainer'),
+        document.querySelector('.preview-box-container')
+    ].filter(Boolean);
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    // Prevent default drag behaviors across the window so dropped files don't open in browser
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        window.addEventListener(eventName, (e) => {
+            if (e.dataTransfer && e.dataTransfer.types && e.dataTransfer.types.includes('Files')) {
+                preventDefaults(e);
+            }
+        }, false);
+
+        dropTargets.forEach(target => {
+            target.addEventListener(eventName, preventDefaults, false);
+        });
+    });
+
+    // Add drag-over styling
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropTargets.forEach(target => {
+            target.addEventListener(eventName, () => {
+                target.classList.add('drag-over');
+            }, false);
+        });
+    });
+
+    // Remove drag-over styling
+    ['dragleave', 'dragend'].forEach(eventName => {
+        dropTargets.forEach(target => {
+            target.addEventListener(eventName, (e) => {
+                if (!target.contains(e.relatedTarget)) {
+                    target.classList.remove('drag-over');
+                }
+            }, false);
+        });
+    });
+
+    // Handle dropped file
+    dropTargets.forEach(target => {
+        target.addEventListener('drop', (e) => {
+            target.classList.remove('drag-over');
+            const dt = e.dataTransfer;
+            if (dt && dt.files && dt.files.length > 0) {
+                handleFileSelection(dt.files[0]);
+            }
+        }, false);
+    });
+}
 
 /**
  * Safely truncate extra long filenames with middle ellipsis (e.g. MyLongName...jpg)
@@ -128,10 +197,12 @@ function handleFileSelection(file) {
     // Read and display preview
     const reader = new FileReader();
     reader.onload = (e) => {
-        previewImg.src = e.target.result;
-        previewFileName.textContent = truncateFileName(file.name, 32);
-        previewFileName.title = file.name;
-        previewFileSize.textContent = formatBytes(file.size);
+        if (previewImg) previewImg.src = e.target.result;
+        if (previewFileName) {
+            previewFileName.textContent = truncateFileName(file.name, 32);
+            previewFileName.title = file.name;
+        }
+        if (previewFileSize) previewFileSize.textContent = formatBytes(file.size);
         
         if (emptyPreview) emptyPreview.style.display = 'none';
         if (filledPreview) filledPreview.style.display = 'flex';
@@ -148,11 +219,15 @@ function resetImageSelection() {
     const fileInput = document.getElementById('leafFileInput');
     const cameraFileInput = document.getElementById('cameraFileInput');
     const fileInputDisplayName = document.getElementById('fileInputDisplayName');
+    const previewImg = document.getElementById('previewImg');
     if (fileInput) fileInput.value = '';
     if (cameraFileInput) cameraFileInput.value = '';
     if (fileInputDisplayName) {
         fileInputDisplayName.textContent = 'No file chosen';
         fileInputDisplayName.removeAttribute('title');
+    }
+    if (previewImg) {
+        previewImg.src = '';
     }
 
     const emptyPreview = document.getElementById('emptyPreview');
@@ -182,10 +257,25 @@ async function performDiagnosis() {
     formData.append('file', currentLeafFile);
 
     try {
-        const response = await fetch('/api/predict-disease', {
-            method: 'POST',
-            body: formData
-        });
+        // Trigger /api/detect-disease endpoint with fallback to /api/predict-disease
+        let response;
+        try {
+            response = await fetch('/api/detect-disease', {
+                method: 'POST',
+                body: formData
+            });
+            if (response.status === 404) {
+                response = await fetch('/api/predict-disease', {
+                    method: 'POST',
+                    body: formData
+                });
+            }
+        } catch (_) {
+            response = await fetch('/api/predict-disease', {
+                method: 'POST',
+                body: formData
+            });
+        }
 
         const data = await response.json();
 
@@ -207,6 +297,8 @@ async function performDiagnosis() {
  * Render diagnostic results into DOM
  */
 function renderDiagnosisResults(res) {
+    if (!res) return;
+
     window.lastDiseaseDiagnosis = res;
     window.chatContext = {
         feature: "disease_detection",
@@ -234,54 +326,70 @@ function renderDiagnosisResults(res) {
 
     const isHealthy = (res.status || '').toLowerCase() === 'healthy';
 
-    if (isHealthy) {
-        statusBanner.className = 'status-banner healthy';
-        statusIcon.className = 'fas fa-check-circle';
-        severityPill.className = 'severity-pill none';
-        severityPill.textContent = 'Healthy Tissue';
-    } else {
-        statusBanner.className = 'status-banner diseased';
-        statusIcon.className = 'fas fa-exclamation-triangle';
-        const sev = (res.severity || 'Moderate').toLowerCase();
-        if (sev.includes('high')) {
-            severityPill.className = 'severity-pill high';
+    if (statusBanner && statusIcon && severityPill) {
+        if (isHealthy) {
+            statusBanner.className = 'status-banner healthy';
+            statusIcon.className = 'fas fa-check-circle';
+            severityPill.className = 'severity-pill none';
+            severityPill.textContent = 'Healthy Tissue';
         } else {
-            severityPill.className = 'severity-pill moderate';
+            statusBanner.className = 'status-banner diseased';
+            statusIcon.className = 'fas fa-exclamation-triangle';
+            const sev = (res.severity || 'Moderate').toLowerCase();
+            if (sev.includes('high')) {
+                severityPill.className = 'severity-pill high';
+            } else if (sev.includes('low')) {
+                severityPill.className = 'severity-pill low';
+            } else {
+                severityPill.className = 'severity-pill moderate';
+            }
+            severityPill.textContent = `${res.severity || 'Active'} Severity`;
         }
-        severityPill.textContent = `${res.severity || 'Active'} Severity`;
     }
 
-    diagnosisTitle.textContent = res.disease_name || 'Diagnosed Condition';
-    cropNameText.textContent = res.crop || 'Crop';
-    pathogenText.textContent = res.pathogen_type || 'Biological';
+    if (diagnosisTitle) diagnosisTitle.textContent = res.disease_name || 'Diagnosed Condition';
+    if (cropNameText) cropNameText.textContent = res.crop || 'Crop';
+    if (pathogenText) pathogenText.textContent = res.pathogen_type || 'Biological';
 
     // Confidence
-    const confVal = res.confidence !== undefined ? res.confidence : 90.0;
+    const confVal = typeof res.confidence === 'number' ? res.confidence : parseFloat(res.confidence || 90.0);
     const confidenceValueText = document.getElementById('confidenceValueText');
     const confidenceBarFill = document.getElementById('confidenceBarFill');
     if (confidenceValueText) confidenceValueText.textContent = `${confVal.toFixed(1)}%`;
-    if (confidenceBarFill) confidenceBarFill.style.width = `${Math.min(100, Math.max(10, confVal))}%`;
+    if (confidenceBarFill) confidenceBarFill.style.width = `${Math.min(100, Math.max(5, confVal))}%`;
 
-    // Overview & Treatments
-    document.getElementById('diagnosisDescription').textContent = res.description || 'No description provided.';
-    document.getElementById('organicTreatmentText').textContent = res.organic_treatment || 'No organic remedies specified.';
-    document.getElementById('chemicalTreatmentText').textContent = res.chemical_treatment || 'No chemical remedies specified.';
-    document.getElementById('preventionText').textContent = res.prevention || 'No preventive guidelines available.';
+    // Overview & Actionable Treatments
+    const diagnosisDesc = document.getElementById('diagnosisDescription');
+    const organicTreatment = document.getElementById('organicTreatmentText');
+    const chemicalTreatment = document.getElementById('chemicalTreatmentText');
+    const prevention = document.getElementById('preventionText');
+
+    if (diagnosisDesc) diagnosisDesc.textContent = res.description || 'No description provided.';
+    if (organicTreatment) organicTreatment.textContent = res.organic_treatment || 'No organic remedies specified.';
+    if (chemicalTreatment) chemicalTreatment.textContent = res.chemical_treatment || 'No chemical remedies specified.';
+    if (prevention) prevention.textContent = res.prevention || 'No preventive guidelines available.';
 
     // Top ensemble candidates
     const candidatesList = document.getElementById('candidatesList');
     if (candidatesList) {
         candidatesList.innerHTML = '';
-        const candidates = res.top_candidates || [];
-        candidates.forEach(cand => {
-            const row = document.createElement('div');
-            row.className = 'candidate-row';
-            row.innerHTML = `
-                <span class="candidate-name" title="${escapeHtml(cand.disease_name)}">${escapeHtml(cand.disease_name)}</span>
-                <span class="candidate-score">${cand.confidence.toFixed(1)}%</span>
-            `;
-            candidatesList.appendChild(row);
-        });
+        const candidates = Array.isArray(res.top_candidates) ? res.top_candidates : [];
+        if (candidates.length === 0) {
+            candidatesList.innerHTML = '<div style="font-size:0.85rem;color:#777;padding:0.3rem;">No alternative candidates recorded.</div>';
+        } else {
+            candidates.forEach(cand => {
+                const row = document.createElement('div');
+                row.className = 'candidate-row';
+                const cScore = typeof cand.confidence === 'number' 
+                    ? cand.confidence.toFixed(1) 
+                    : parseFloat(cand.confidence || 0).toFixed(1);
+                row.innerHTML = `
+                    <span class="candidate-name" title="${escapeHtml(cand.disease_name || 'Candidate')}">${escapeHtml(cand.disease_name || 'Candidate')}</span>
+                    <span class="candidate-score">${cScore}%</span>
+                `;
+                candidatesList.appendChild(row);
+            });
+        }
     }
 
     // Scroll smoothly to results on mobile devices
@@ -311,19 +419,32 @@ function askAssistantAboutDisease() {
         ? `I just scanned a ${res.crop} leaf showing signs of "${res.disease_name}". Can you explain the treatment schedule and preventive management steps?`
         : `How can I identify and treat foliar crop fungal diseases?`;
 
+    const chatWindow = document.getElementById('chat-window');
     if (typeof toggleChat === 'function') {
-        const chatWindow = document.getElementById('chat-window');
-        if (chatWindow && chatWindow.style.display !== 'flex') {
+        if (chatWindow && (chatWindow.style.display === 'none' || !chatWindow.style.display)) {
             toggleChat();
         }
+    } else if (chatWindow) {
+        chatWindow.style.display = 'flex';
     }
 
     const chatInput = document.getElementById('chat-input');
     if (chatInput) {
         chatInput.value = prompt;
+        // Auto-expand textarea height to fit prompt smoothly
+        chatInput.style.height = 'auto';
+        chatInput.style.height = Math.min(chatInput.scrollHeight, 80) + 'px';
         chatInput.focus();
+        chatInput.dispatchEvent(new Event('input', { bubbles: true }));
+
+        if (window.innerWidth < 768) {
+            chatInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
     }
 }
+
+// Make accessible to inline onclick handlers
+window.askAssistantAboutDisease = askAssistantAboutDisease;
 
 function formatBytes(bytes) {
     if (bytes === 0) return '0 Bytes';
@@ -334,6 +455,7 @@ function formatBytes(bytes) {
 }
 
 function escapeHtml(text) {
+    if (!text) return '';
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;

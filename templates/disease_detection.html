@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Crop Disease Detection - CropPulse{% endblock %}
+{% block title %}Plant Disease Scanner & Leaf Diagnostics - CropPulse{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -396,8 +396,17 @@
 }
 
 .severity-pill.none { background: #e8f5e9; color: #2e7d32; }
+.severity-pill.low { background: #e3f2fd; color: #1565c0; }
 .severity-pill.moderate { background: #fff8e1; color: #f57f17; }
 .severity-pill.high { background: #ffebee; color: #c62828; }
+
+/* Drag and Drop Active Indicator */
+.file-input-wrapper.drag-over,
+.preview-box-container.drag-over {
+    border: 2px dashed #1e6b37 !important;
+    background-color: #f0fdf4 !important;
+    box-shadow: 0 0 0 3px rgba(30, 107, 55, 0.15) !important;
+}
 
 .confidence-box {
     background: #fafafa;
@@ -496,7 +505,7 @@
 <div class="container">
     <!-- Header Banner -->
     <div class="disease-hero">
-        <h1>Crop Disease Detection</h1>
+        <h1>Plant Disease Scanner & Leaf Diagnostics</h1>
         <p>Upload a leaf image or scan using your mobile camera to detect plant diseases with our machine learning model.</p>
     </div>
 
@@ -536,7 +545,7 @@
             <label class="section-label" style="margin-top: 1.2rem;">
                 <i class="fas fa-image"></i> Preview
             </label>
-            <div class="preview-box-container">
+            <div class="preview-box-container" id="previewBoxContainer">
                 <!-- Empty State -->
                 <div id="emptyPreview" class="preview-empty">
                     <i class="far fa-image"></i>

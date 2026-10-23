@@ -42,7 +42,7 @@ function formatTimestamp(ms) {
     return d.toLocaleDateString([], { month: 'short', day: 'numeric' }) + ' ' + timeStr;
 }
 
-// Save current conversation to sessions. Keep last 15.
+// Save current conversation to sessions. Keep last 20.
 function saveConversation() {
     const userCount = chatHistory.filter(m => m.role === 'user').length;
     const botCount = chatHistory.filter(m => m.role === 'bot').length;
@@ -51,14 +51,17 @@ function saveConversation() {
     let sessions = [];
     try {
         sessions = JSON.parse(localStorage.getItem(SESSIONS_KEY) || '[]');
-    } catch (_) {}
+        if (!Array.isArray(sessions)) sessions = [];
+    } catch (_) {
+        sessions = [];
+    }
 
     const firstUser = chatHistory.find(m => m.role === 'user');
     const title = firstUser ? generateTopicName(firstUser.content) : 'Chat';
     const ts = Date.now();
 
     const timeLabel = formatTimestamp(ts);
-    const convId = activeConversationId !== null ? activeConversationId : ('conv_' + ts);
+    const convId = activeConversationId !== null ? String(activeConversationId) : ('conv_' + ts);
     activeConversationId = convId;
 
     const entry = {
@@ -71,10 +74,11 @@ function saveConversation() {
 
     sessions = sessions.filter(s => String(s.id) !== String(convId));
     sessions.unshift(entry);
-    if (sessions.length > 15) sessions = sessions.slice(0, 15);
+    if (sessions.length > 20) sessions = sessions.slice(0, 20);
 
     localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
 
+    // Cloud sync if authenticated
     if (typeof window.syncCurrentChatToCloud === 'function') {
         window.syncCurrentChatToCloud(entry);
     }
@@ -86,34 +90,51 @@ function deleteConversation(sessionId, event) {
         event.preventDefault();
         event.stopPropagation();
     }
+    const idStr = String(sessionId).trim();
+    if (!idStr) return;
+
     let sessions = [];
     try {
         sessions = JSON.parse(localStorage.getItem(SESSIONS_KEY) || '[]');
-    } catch (_) {}
-    const idStr = String(sessionId);
+        if (!Array.isArray(sessions)) sessions = [];
+    } catch (_) {
+        sessions = [];
+    }
     sessions = sessions.filter(s => String(s.id) !== idStr);
     localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
 
-    if (typeof window.syncCurrentChatToCloud === 'function') {
-        window.syncCurrentChatToCloud(entry);
+    // Delete from Supabase cloud if user is signed in
+    if (typeof window.deleteConversationFromCloud === 'function') {
+        window.deleteConversationFromCloud(idStr);
+    } else if (typeof window.deleteConversationFromSupabase === 'function') {
+        window.deleteConversationFromSupabase(idStr);
     }
+
     if (activeConversationId !== null && String(activeConversationId) === idStr) {
         activeConversationId = null;
         chatHistory = [];
         localStorage.removeItem(HISTORY_KEY);
         const body = document.getElementById('chat-body');
         if (body) body.innerHTML = '';
-        appendMessage('bot', 'Hello! I am your CropPulse assistant. Ask me anything about crops, yield, soil health, or fertilizers.');
+        appendMessage('bot', 'Hello! I am your CropPulse assistant. Ask me anything about crops, yield, soil health, or fertilizers.', false);
     }
     renderHistorySidebar();
 }
 
 // Load a saved conversation by id
 function loadConversation(sessionId) {
+    // If current conversation has messages, save it first before switching
+    if (chatHistory && chatHistory.filter(m => m.role === 'user').length > 0) {
+        saveConversation();
+    }
+
     let sessions = [];
     try {
         sessions = JSON.parse(localStorage.getItem(SESSIONS_KEY) || '[]');
-    } catch (_) {}
+        if (!Array.isArray(sessions)) sessions = [];
+    } catch (_) {
+        sessions = [];
+    }
     const conv = sessions.find(s => String(s.id) === String(sessionId));
     if (!conv) return;
 
@@ -178,7 +199,7 @@ function startNewChat() {
     renderHistorySidebar();
     const body = document.getElementById('chat-body');
     if (body) body.innerHTML = '';
-    appendMessage('bot', 'Hello! I am your CropPulse assistant. Ask me anything about crops, yield, soil health, or fertilizers.');
+    appendMessage('bot', 'Hello! I am your CropPulse assistant. Ask me anything about crops, yield, soil health, or fertilizers.', false);
 }
 
 function escapeHtml(str) {
@@ -405,6 +426,19 @@ function maybeShowChatIntro() {
     const toast = document.getElementById('chat-intro-toast');
     if (toast) toast.style.display = 'block';
 }
+
+// Expose global methods for template inline handlers and external sync scripts
+window.renderHistorySidebar = renderHistorySidebar;
+window.formatTimestamp = formatTimestamp;
+window.loadConversation = loadConversation;
+window.deleteConversation = deleteConversation;
+window.startNewChat = startNewChat;
+window.clearChat = clearChat;
+window.toggleChat = toggleChat;
+window.toggleHistorySidebar = toggleHistorySidebar;
+window.sendMessage = sendMessage;
+window.handleKeyPress = handleKeyPress;
+window.dismissChatIntro = dismissChatIntro;
 
 document.addEventListener('DOMContentLoaded', function () {
     restoreChatHistory();

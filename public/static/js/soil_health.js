@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('soilHealthForm');
     const resultsContainer = document.getElementById('resultsContainer');
     const analyzeBtn = document.getElementById('analyzeBtn');
+    const predictYieldFromSoilBtn = document.getElementById('predictYieldFromSoilBtn');
     const originalBtnText = analyzeBtn ? analyzeBtn.innerHTML : '<i class="fas fa-microscope"></i> Analyze & Recommend';
 
     // Helper to safely populate form fields from URL params
@@ -163,6 +164,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Cross-navigation to Yield Prediction
+    if (predictYieldFromSoilBtn) {
+        predictYieldFromSoilBtn.addEventListener('click', function() {
+            const cropSelect = document.getElementById('cropType');
+            const cropVal = cropSelect ? cropSelect.value : '';
+            if (cropVal) {
+                window.location.href = `/yield-prediction?crop=${encodeURIComponent(cropVal)}`;
+            }
+        });
+    }
+
     function displayResults(result) {
         if (!result) return;
         // Hide placeholder and show results
@@ -171,8 +183,27 @@ document.addEventListener('DOMContentLoaded', function() {
             placeholderContainer.style.display = 'none';
         }
         
-        const fertName = result.fertilizer ? String(result.fertilizer) : 'Recommended Fertilizer';
+        const fertName = result.fertilizer ? String(result.fertilizer) : 'Recommended Formulation';
         const soilAdv = result.soil_advice ? String(result.soil_advice) : 'Soil nutrients are being analyzed.';
+        const confidence = typeof result.confidence === 'number' ? result.confidence : parseFloat(result.confidence) || 0;
+
+        // Display fertilizer badge and confidence
+        const badgeEl = document.getElementById('fertilizerBadge');
+        const confValEl = document.getElementById('fertilizerConfidence');
+        if (badgeEl && confValEl) {
+            confValEl.textContent = confidence.toFixed(1);
+            badgeEl.style.display = 'inline-block';
+        }
+
+        // Display confidence bar
+        const confContainer = document.getElementById('fertilizerConfidenceContainer');
+        const confFill = document.getElementById('fertilizerConfidenceFill');
+        const confBarText = document.getElementById('fertilizerConfidenceBarText');
+        if (confContainer && confFill && confBarText) {
+            confContainer.style.display = 'block';
+            confFill.style.width = Math.min(100, Math.max(5, confidence)) + '%';
+            confBarText.textContent = confidence.toFixed(1) + '%';
+        }
 
         // Display fertilizer name
         const fnEl = document.getElementById('fertilizerName');
@@ -197,12 +228,23 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
+        // Enable cross-navigation button
+        if (predictYieldFromSoilBtn) predictYieldFromSoilBtn.disabled = false;
+
         // Inject context for chatbot (soil health focus)
         try {
+            const cropSelect = document.getElementById('cropType');
+            const cropName = cropSelect ? (cropSelect.options[cropSelect.selectedIndex]?.text || cropSelect.value) : '';
+            const soilSelect = document.getElementById('soilType');
+            const soilName = soilSelect ? soilSelect.value : '';
+
             window.chatContext = {
                 feature: "soil_health",
                 recommendation: soilAdv,
-                fertilizer: fertName
+                fertilizer: fertName,
+                confidence: confidence,
+                crop: cropName,
+                soil: soilName
             };
         } catch (e) {
             // Ignore context errors
@@ -217,6 +259,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function showError(message) {
         alert('Error: ' + message);
+        const badgeEl = document.getElementById('fertilizerBadge');
+        if (badgeEl) badgeEl.style.display = 'none';
+        const confContainer = document.getElementById('fertilizerConfidenceContainer');
+        if (confContainer) confContainer.style.display = 'none';
+        if (predictYieldFromSoilBtn) predictYieldFromSoilBtn.disabled = true;
     }
 
     // Form validation

@@ -139,12 +139,23 @@
         <!-- Results Section -->
         <div id="resultsContainer" class="result-container hidden">
             <div class="result-card">
+                <div class="confidence-badge" id="fertilizerBadge" style="display: none; margin: 0 auto 1.25rem;">
+                    <i class="fas fa-check-circle"></i> Recommended Formulation • <span id="fertilizerConfidence">-</span>% Match
+                </div>
+
                 <div class="fertilizer-image" id="fertilizerImage">
                     <i class="fas fa-seedling"></i>
                 </div>
                 <h2 class="fertilizer-name" id="fertilizerName">-</h2>
-                
 
+                <div class="confidence-container" id="fertilizerConfidenceContainer" style="display: none; max-width: 320px; margin: 0 auto 1.25rem;">
+                    <div class="confidence-label">AI Recommendation Match</div>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" id="fertilizerConfidenceFill" style="width: 0%;">
+                            <span class="confidence-text" id="fertilizerConfidenceBarText">0%</span>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="result-details">
                     <div class="detail-item">
@@ -184,7 +195,15 @@
                 </div>
             </div>
 
-            <button type="button" class="btn-primary btn-chatbot-accent" style="margin-top: 1rem;" onclick="if(typeof toggleChat === 'function') toggleChat();">
+            <button type="button"
+                    id="predictYieldFromSoilBtn"
+                    class="btn-primary"
+                    style="margin-top: 1rem; width: 100%; display: block;"
+                    disabled>
+                <i class="fas fa-chart-line"></i> Predict Yield for this Crop
+            </button>
+
+            <button type="button" class="btn-primary btn-chatbot-accent" style="margin-top: 1rem; width: 100%; display: block;" onclick="if(typeof toggleChat === 'function') toggleChat();">
                 <i class="fas fa-comments"></i> Ask CropPulse Assistant
             </button>
         </div>
@@ -198,6 +217,8 @@
         </div>
     </div>
 </div>
+{% endblock %}
 
+{% block extra_js %}
 <script src="{{ url_for('static', filename='js/soil_health.js') }}"></script>
 {% endblock %}

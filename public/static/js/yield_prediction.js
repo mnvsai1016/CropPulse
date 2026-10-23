@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('yieldForm');
     const predictBtn = document.getElementById('predictBtn');
     const calculateBtn = document.getElementById('calculateBtn');
+    const getYieldSoilHealthBtn = document.getElementById('getYieldSoilHealthBtn');
     const resultsContainer = document.getElementById('resultsContainer');
     const placeholderContainer = document.getElementById('placeholderContainer');
     
@@ -208,11 +209,23 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Cross-navigation to Soil Health & Fertilizer Advisor
+    if (getYieldSoilHealthBtn) {
+        getYieldSoilHealthBtn.addEventListener('click', function() {
+            const cropSelect = document.getElementById('crop');
+            const cropVal = cropSelect ? cropSelect.value : '';
+            if (cropVal) {
+                window.location.href = `/soil-health?crop=${encodeURIComponent(cropVal)}`;
+            }
+        });
+    }
+
     function showLoadingState() {
         const ty = document.getElementById('totalYield');
         if (ty) ty.textContent = '...';
         const yph = document.getElementById('yieldPerHectare');
         if (yph) yph.textContent = 'Calculating...';
+        if (getYieldSoilHealthBtn) getYieldSoilHealthBtn.disabled = true;
     }
 
     function displayResults(result) {
@@ -230,14 +243,26 @@ document.addEventListener('DOMContentLoaded', function() {
             yphEl.textContent = `${yieldPerHectare.toFixed(2)} Tonnes per Hectare (for ${area} hectares)`;
         }
 
+        // Enable soil health cross-navigation button
+        if (getYieldSoilHealthBtn) getYieldSoilHealthBtn.disabled = false;
+
         // Inject context for chatbot
         try {
             const cropSelect = document.getElementById('crop');
-            const cropName = cropSelect ? cropSelect.value : '';
+            const cropName = cropSelect ? (cropSelect.options[cropSelect.selectedIndex]?.text || cropSelect.value) : '';
+            const stateSelect = document.getElementById('state');
+            const stateName = stateSelect ? stateSelect.value : '';
+            const seasonSelect = document.getElementById('season');
+            const seasonName = seasonSelect ? seasonSelect.value : '';
+
             window.chatContext = {
                 feature: "yield_prediction",
                 crop: cropName,
-                yield: yieldPerHectare
+                yield: yieldPerHectare,
+                total_yield: totalYield,
+                area: area,
+                state: stateName,
+                season: seasonName
             };
         } catch (e) {
             // Ignore context errors

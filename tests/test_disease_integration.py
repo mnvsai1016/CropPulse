@@ -14,7 +14,7 @@ def run_tests():
         ('/crop-recommendation', "Smart Crop Recommendation"),
         ('/yield-prediction', "Crop Yield Prediction"),
         ('/soil-health', "Soil Health & Fertilizer Recommendations"),
-        ('/disease-detection', "Plant Disease Scanner & Leaf Diagnostics"),
+        ('/disease-detection', "Crop Disease Detection"),
         ('/api/health', "model_status")
     ]
     for r, text in routes:

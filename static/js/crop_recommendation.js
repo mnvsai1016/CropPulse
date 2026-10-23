@@ -147,6 +147,12 @@ document.addEventListener('DOMContentLoaded', function() {
     function showLoadingState() {
         const cropNameEl = document.getElementById('cropName');
         if (cropNameEl) cropNameEl.textContent = 'Analyzing...';
+        const badgeEl = document.getElementById('topRecommendationBadge');
+        if (badgeEl) badgeEl.style.display = 'none';
+        const adviceSec = document.getElementById('cropAdviceSection');
+        if (adviceSec) adviceSec.style.display = 'none';
+        const altSec = document.getElementById('alternativesSection');
+        if (altSec) altSec.style.display = 'none';
         if (predictYieldBtn) predictYieldBtn.disabled = true;
         if (getSoilHealthBtn) getSoilHealthBtn.disabled = true;
         if (askChatbotBtn) askChatbotBtn.disabled = true;
@@ -155,8 +161,19 @@ document.addEventListener('DOMContentLoaded', function() {
     function displayResults(result) {
         if (!result) return;
         const cropName = result.crop ? String(result.crop) : 'Unknown';
+        const confidence = typeof result.confidence === 'number' ? result.confidence : parseFloat(result.confidence) || 0;
+        const alternatives = Array.isArray(result.alternatives) ? result.alternatives : [];
+        const advice = result.advice ? String(result.advice) : '';
 
         currentCropName = cropName;
+
+        // Top Recommendation Badge & Confidence
+        const badgeEl = document.getElementById('topRecommendationBadge');
+        const confValEl = document.getElementById('confidenceValue');
+        if (badgeEl && confValEl) {
+            confValEl.textContent = confidence.toFixed(1);
+            badgeEl.style.display = 'inline-block';
+        }
 
         // Update crop name
         const cropNameEl = document.getElementById('cropName');
@@ -172,11 +189,66 @@ document.addEventListener('DOMContentLoaded', function() {
             cropImage.innerHTML = `<span style="font-size: 4rem;">${icon}</span>`;
         }
 
-        // Inject context for chatbot
+        // Update agronomic advice
+        const adviceSec = document.getElementById('cropAdviceSection');
+        const adviceText = document.getElementById('cropAdviceText');
+        if (adviceSec && adviceText) {
+            if (advice && advice.trim()) {
+                adviceText.textContent = advice;
+                adviceSec.style.display = 'block';
+            } else {
+                adviceSec.style.display = 'none';
+            }
+        }
+
+        // Update secondary alternatives
+        const altSec = document.getElementById('alternativesSection');
+        const altList = document.getElementById('alternativesList');
+        if (altSec && altList) {
+            if (alternatives && alternatives.length > 0) {
+                altList.innerHTML = '';
+                alternatives.forEach(alt => {
+                    const altCropName = alt.crop ? String(alt.crop) : '';
+                    const altConf = typeof alt.confidence === 'number' ? alt.confidence.toFixed(1) : alt.confidence;
+                    const altLower = altCropName.toLowerCase();
+                    const altIcon = cropIcons[altLower] || '🌱';
+                    const capName = altCropName.charAt(0).toUpperCase() + altCropName.slice(1);
+
+                    const card = document.createElement('div');
+                    card.className = 'alternative-card';
+                    card.innerHTML = `
+                        <div class="alternative-info">
+                            <span class="alternative-icon">${altIcon}</span>
+                            <div>
+                                <span class="alternative-name">${capName}</span>
+                                <span class="alternative-conf">${altConf}% match</span>
+                            </div>
+                        </div>
+                        <div class="alternative-actions">
+                            <a href="/yield-prediction?crop=${encodeURIComponent(altCropName)}" class="btn-alt-action" title="Predict yield for ${capName}">
+                                <i class="fas fa-chart-line"></i> Yield
+                            </a>
+                            <a href="/soil-health?crop=${encodeURIComponent(altCropName)}" class="btn-alt-action" title="Soil health for ${capName}">
+                                <i class="fas fa-microscope"></i> Soil
+                            </a>
+                        </div>
+                    `;
+                    altList.appendChild(card);
+                });
+                altSec.style.display = 'block';
+            } else {
+                altSec.style.display = 'none';
+            }
+        }
+
+        // Inject rich context for CropPulse Assistant
         try {
             window.chatContext = {
                 feature: "crop_recommendation",
-                crop: cropName
+                crop: cropName,
+                confidence: confidence,
+                alternatives: alternatives.map(a => a.crop),
+                advice: advice
             };
         } catch (e) {
             // Ignore context errors
@@ -198,6 +270,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (cropNameEl) cropNameEl.textContent = 'Error: ' + (message || 'Unknown error');
         const cropImage = document.getElementById('cropImage');
         if (cropImage) cropImage.innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #dc3545;"></i>';
+        const badgeEl = document.getElementById('topRecommendationBadge');
+        if (badgeEl) badgeEl.style.display = 'none';
+        const adviceSec = document.getElementById('cropAdviceSection');
+        if (adviceSec) adviceSec.style.display = 'none';
+        const altSec = document.getElementById('alternativesSection');
+        if (altSec) altSec.style.display = 'none';
         if (predictYieldBtn) predictYieldBtn.disabled = true;
         if (getSoilHealthBtn) getSoilHealthBtn.disabled = true;
         if (askChatbotBtn) askChatbotBtn.disabled = true;

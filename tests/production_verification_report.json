@@ -1,0 +1,218 @@
+{
+  "entrypoint_verification": {
+    "status": "PASS",
+    "load_time_ms": 2258.53,
+    "wsgi_app": "<Flask 'web_app'>"
+  },
+  "bundle_size_verification": {
+    "status": "PASS",
+    "bundle_size_mb": 99.58,
+    "max_limit_mb": 250.0,
+    "headroom_mb": 150.42,
+    "total_files": 85,
+    "excluded_files_count": 12
+  },
+  "vercel_config_verification": {
+    "status": "PASS",
+    "has_python_build": true,
+    "has_fs_handle": true,
+    "has_catchall": true,
+    "config": {
+      "version": 2,
+      "builds": [
+        {
+          "src": "api/index.py",
+          "use": "@vercel/python"
+        }
+      ],
+      "routes": [
+        {
+          "handle": "filesystem"
+        },
+        {
+          "src": "/(.*)",
+          "dest": "/api/index.py"
+        }
+      ]
+    }
+  },
+  "test_client_routes": {
+    "GET /": {
+      "status_code": 200,
+      "latency_ms": 8.82,
+      "size_bytes": 18464,
+      "verified_content": "CropPulse"
+    },
+    "GET /disease-detection": {
+      "status_code": 200,
+      "latency_ms": 3.24,
+      "size_bytes": 31925,
+      "verified_content": "Crop Disease Detection"
+    },
+    "GET /crop-recommendation": {
+      "status_code": 200,
+      "latency_ms": 2.01,
+      "size_bytes": 20905,
+      "verified_content": "Smart Crop Recommendation"
+    },
+    "GET /yield-prediction": {
+      "status_code": 200,
+      "latency_ms": 7.16,
+      "size_bytes": 43813,
+      "verified_content": "Crop Yield Prediction"
+    },
+    "GET /soil-health": {
+      "status_code": 200,
+      "latency_ms": 9.6,
+      "size_bytes": 24340,
+      "verified_content": "Soil Health & Fertilizer Recommendations"
+    },
+    "GET /api/health": {
+      "status_code": 200,
+      "latency_ms": 0.38,
+      "size_bytes": 267,
+      "verified_content": "all_models_loaded"
+    },
+    "POST /api/chat": {
+      "status_code": 200,
+      "latency_ms": 0.88,
+      "size_bytes": 202,
+      "verified_content": "reply"
+    },
+    "POST /api/predict-crop": {
+      "status_code": 200,
+      "latency_ms": 14.6,
+      "size_bytes": 172,
+      "verified_content": "rice"
+    },
+    "POST /api/predict-yield": {
+      "status_code": 200,
+      "latency_ms": 4.38,
+      "size_bytes": 84,
+      "verified_content": "total_yield"
+    },
+    "POST /api/predict-fertilizer": {
+      "status_code": 200,
+      "latency_ms": 3.24,
+      "size_bytes": 262,
+      "verified_content": "fertilizer"
+    },
+    "POST /api/predict-disease": {
+      "status_code": 200,
+      "latency_ms": 112.29,
+      "prediction": {
+        "chemical_treatment": "None required.",
+        "class_id": 3,
+        "confidence": 57.5,
+        "crop": "Apple",
+        "description": "Leaf tissue exhibits vibrant green chlorophyll, smooth epidermis, and intact vascular venation without necrotic spots or fungal signs.",
+        "disease_name": "Healthy Apple Leaf",
+        "organic_treatment": "No curative treatment required. Maintain scheduled balanced organic compost applications.",
+        "pathogen_type": "None",
+        "prevention": "Continue standard seasonal prophylactic scouting; ensure adequate soil drainage and regular canopy pruning.",
+        "severity": "None",
+        "status": "Healthy",
+        "top_candidates": [
+          {
+            "confidence": 57.5,
+            "disease_name": "Healthy Apple Leaf",
+            "id": 3
+          },
+          {
+            "confidence": 20.0,
+            "disease_name": "Apple Scab",
+            "id": 0
+          },
+          {
+            "confidence": 9.17,
+            "disease_name": "Corn Northern Leaf Blight",
+            "id": 9
+          }
+        ]
+      }
+    }
+  },
+  "live_http_urllib_routes": {
+    "GET /": {
+      "status_code": 200,
+      "avg_latency_ms": 3.87,
+      "min_latency_ms": 1.04,
+      "max_latency_ms": 14.68,
+      "content_type": "text/html; charset=utf-8",
+      "size_bytes": 18469
+    },
+    "GET /disease-detection": {
+      "status_code": 200,
+      "avg_latency_ms": 4.99,
+      "min_latency_ms": 0.97,
+      "max_latency_ms": 20.62,
+      "content_type": "text/html; charset=utf-8",
+      "size_bytes": 31930
+    },
+    "GET /crop-recommendation": {
+      "status_code": 200,
+      "avg_latency_ms": 9.08,
+      "min_latency_ms": 1.28,
+      "max_latency_ms": 14.81,
+      "content_type": "text/html; charset=utf-8",
+      "size_bytes": 20911
+    },
+    "GET /yield-prediction": {
+      "status_code": 200,
+      "avg_latency_ms": 12.55,
+      "min_latency_ms": 2.75,
+      "max_latency_ms": 15.45,
+      "content_type": "text/html; charset=utf-8",
+      "size_bytes": 43820
+    },
+    "GET /soil-health": {
+      "status_code": 200,
+      "avg_latency_ms": 12.1,
+      "min_latency_ms": 2.25,
+      "max_latency_ms": 15.05,
+      "content_type": "text/html; charset=utf-8",
+      "size_bytes": 24380
+    },
+    "POST /api/chat": {
+      "status_code": 200,
+      "avg_latency_ms": 12.58,
+      "min_latency_ms": 1.21,
+      "max_latency_ms": 15.77,
+      "content_type": "application/json",
+      "size_bytes": 256
+    },
+    "POST /api/predict-crop": {
+      "status_code": 200,
+      "avg_latency_ms": 30.04,
+      "min_latency_ms": 25.84,
+      "max_latency_ms": 31.61,
+      "content_type": "application/json",
+      "size_bytes": 172
+    },
+    "POST /api/predict-yield": {
+      "status_code": 200,
+      "avg_latency_ms": 17.07,
+      "min_latency_ms": 6.22,
+      "max_latency_ms": 23.63,
+      "content_type": "application/json",
+      "size_bytes": 84
+    },
+    "POST /api/predict-fertilizer": {
+      "status_code": 200,
+      "avg_latency_ms": 15.01,
+      "min_latency_ms": 2.21,
+      "max_latency_ms": 26.98,
+      "content_type": "application/json",
+      "size_bytes": 262
+    },
+    "GET /static/css/style.css": {
+      "status_code": 200,
+      "avg_latency_ms": 12.29,
+      "min_latency_ms": 1.47,
+      "max_latency_ms": 16.2,
+      "content_type": "text/css; charset=utf-8",
+      "size_bytes": 27748
+    }
+  },
+  "ml_inference_verification": {}
+}
