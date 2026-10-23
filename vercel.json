@@ -3,17 +3,7 @@
   "builds": [
     {
       "src": "api/index.py",
-      "use": "@vercel/python",
-      "config": {
-        "includeFiles": [
-          "final_model/**",
-          "templates/**",
-          "raw_data/**",
-          "chatbot/**",
-          "crop_manager.py",
-          "agri_guide/**"
-        ]
-      }
+      "use": "@vercel/python"
     }
   ],
   "routes": [
