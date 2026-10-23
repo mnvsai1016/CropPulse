@@ -21,6 +21,13 @@ HF_REPO_ID = "neerajbodinapalli/agri-guide-models"
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "agri-guide-secret-key-2024"
 
+@app.context_processor
+def inject_supabase_credentials():
+    return {
+        'supabase_url': os.environ.get('SUPABASE_URL', ''),
+        'supabase_anon_key': os.environ.get('SUPABASE_ANON_KEY', '')
+    }
+
 # Load models and preprocessors at startup
 MODEL_DIR = Path(__file__).parent
 

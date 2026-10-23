@@ -74,6 +74,10 @@ function saveConversation() {
     if (sessions.length > 15) sessions = sessions.slice(0, 15);
 
     localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
+
+    if (typeof window.syncCurrentChatToCloud === 'function') {
+        window.syncCurrentChatToCloud(entry);
+    }
 }
 
 // Delete a saved conversation by id
@@ -89,6 +93,10 @@ function deleteConversation(sessionId, event) {
     const idStr = String(sessionId);
     sessions = sessions.filter(s => String(s.id) !== idStr);
     localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
+
+    if (typeof window.syncCurrentChatToCloud === 'function') {
+        window.syncCurrentChatToCloud(entry);
+    }
     if (activeConversationId !== null && String(activeConversationId) === idStr) {
         activeConversationId = null;
         chatHistory = [];
