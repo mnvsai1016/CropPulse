@@ -167,32 +167,55 @@ function renderAvatarHtml(avatar, initial, fullName, size = 28, borderWidth = 2)
  * Update UI across the application (Navbar & Chatbot Header)
  */
 function updateAuthUI(user) {
-    // 1. Update Navbar Auth Container
+    // 1. Update Navbar Auth Container (Top Right Corner Icon + Dropdown)
     const navContainer = document.getElementById('navbar-auth-section');
     if (navContainer) {
         if (user) {
             const meta = user.user_metadata || {};
             const fullName = meta.full_name || meta.name || user.email?.split('@')[0] || 'User';
+            const email = user.email || '';
             const avatar = meta.avatar_url || meta.picture || '';
             const initial = (fullName.trim().charAt(0) || 'U').toUpperCase();
             const escapedName = escapeHtmlAuth(fullName);
-            const avatarHtml = renderAvatarHtml(avatar, initial, fullName, 28, 2);
+            const escapedEmail = escapeHtmlAuth(email);
+            const avatarHtml = renderAvatarHtml(avatar, initial, fullName, 38, 2);
 
             navContainer.innerHTML = `
-                <div class="nav-auth-container" title="${escapedName}" style="display:inline-flex;align-items:center;gap:8px;background:#f1f8e9;padding:4px 10px 4px 6px;border-radius:9999px;border:1px solid #c8e6c9;box-shadow:0 2px 6px rgba(0,0,0,0.06);transition:all 0.2s ease;">
-                    ${avatarHtml}
-                    <span class="nav-auth-name" style="color:#1e6b37;font-weight:600;font-size:13px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.2;">${escapedName}</span>
-                    <button onclick="signOutUser()" class="nav-auth-signout-btn" style="background:transparent;border:none;color:#c62828;cursor:pointer;font-size:13px;padding:3px;margin-left:2px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;transition:all 0.2s ease;" title="Sign out" aria-label="Sign out">
-                        <i class="fas fa-sign-out-alt"></i>
+                <div class="nav-profile-wrapper" id="navProfileWrapper">
+                    <button type="button" class="nav-profile-trigger" id="profileTriggerBtn" onclick="toggleProfileDropdown(event)" aria-label="User Account" title="${escapedName}">
+                        ${avatarHtml}
+                        <span class="nav-profile-status-dot" title="Online & Connected"></span>
                     </button>
+                    <div class="nav-profile-dropdown" id="navProfileDropdown">
+                        <div class="dropdown-user-header">
+                            <div class="dropdown-avatar-wrap">
+                                ${renderAvatarHtml(avatar, initial, fullName, 42, 2)}
+                            </div>
+                            <div class="dropdown-user-details">
+                                <div class="dropdown-user-name">${escapedName}</div>
+                                <div class="dropdown-user-email">${escapedEmail}</div>
+                                <div class="dropdown-sync-pill"><i class="fas fa-check-circle"></i> Supabase Synced</div>
+                            </div>
+                        </div>
+                        <div class="dropdown-menu-list">
+                            <button type="button" class="dropdown-menu-item" onclick="openProfileModal(); closeProfileDropdown();">
+                                <i class="fas fa-user-circle"></i>
+                                <span>Profile</span>
+                            </button>
+                            <div class="dropdown-divider"></div>
+                            <button type="button" class="dropdown-menu-item logout" onclick="signOutUser(); closeProfileDropdown();">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Logout</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             `;
         } else {
             navContainer.innerHTML = `
-                <button onclick="signInWithGoogle()" class="nav-auth-signin-btn" style="background:#ffffff;color:#1e6b37;border:1px solid #dcdcdc;border-radius:9999px;padding:6px 14px;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.06);transition:all 0.2s ease;font-family:inherit;white-space:nowrap;" title="Sign in with Google">
-                    <i class="fab fa-google" style="color:#ea4335;font-size:14px;"></i>
-                    <span class="google-btn-text-full">Sign In with Google</span>
-                    <span class="google-btn-text-short">Sign In</span>
+                <button onclick="signInWithGoogle()" class="nav-signin-compact-btn" title="Sign in with Google">
+                    <i class="fab fa-google"></i>
+                    <span>Sign In</span>
                 </button>
             `;
         }
@@ -530,6 +553,83 @@ window.getCurrentAuthUser = function() {
 
 window.getSupabaseClient = function() {
     return supabaseClient;
+};
+
+// Dropdown menu toggle & close
+window.toggleProfileDropdown = function(event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    const dropdown = document.getElementById('navProfileDropdown');
+    if (!dropdown) return;
+    dropdown.classList.toggle('show');
+};
+
+window.closeProfileDropdown = function() {
+    const dropdown = document.getElementById('navProfileDropdown');
+    if (dropdown) dropdown.classList.remove('show');
+};
+
+document.addEventListener('click', function(e) {
+    const wrapper = document.getElementById('navProfileWrapper');
+    if (wrapper && !wrapper.contains(e.target)) {
+        window.closeProfileDropdown();
+    }
+});
+
+// Profile Modal open & close
+window.openProfileModal = function() {
+    const modal = document.getElementById('userProfileModal');
+    if (!modal) return;
+
+    const user = currentAuthUser;
+    const meta = user?.user_metadata || {};
+    const fullName = meta.full_name || meta.name || user?.email?.split('@')[0] || 'User';
+    const email = user?.email || 'Not available';
+    const avatar = meta.avatar_url || meta.picture || '';
+    const initial = (fullName.trim().charAt(0) || 'U').toUpperCase();
+
+    let localSessions = [];
+    try {
+        localSessions = JSON.parse(localStorage.getItem('croppulse_chat_sessions') || '[]');
+    } catch (_) {}
+
+    const modalBody = document.getElementById('userProfileModalBody');
+    if (modalBody) {
+        modalBody.innerHTML = `
+            <div style="display:flex;align-items:center;gap:14px;padding-bottom:16px;border-bottom:1px solid #eef2ee;margin-bottom:16px;">
+                ${renderAvatarHtml(avatar, initial, fullName, 52, 2)}
+                <div style="min-width:0;flex:1;">
+                    <div style="font-size:16px;font-weight:700;color:#1e6b37;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtmlAuth(fullName)}</div>
+                    <div style="font-size:13px;color:#666;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtmlAuth(email)}</div>
+                    <div style="display:inline-flex;align-items:center;gap:5px;background:#e8f5e9;color:#2e7d32;font-size:11px;font-weight:600;padding:2px 8px;border-radius:12px;margin-top:6px;border:1px solid #c8e6c9;">
+                        <i class="fab fa-google" style="color:#ea4335;"></i> Google Verified
+                    </div>
+                </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;">
+                <div style="background:#f8faf8;padding:12px;border-radius:10px;border:1px solid #e8f5e9;">
+                    <div style="color:#888;font-size:11px;text-transform:uppercase;font-weight:600;">Cloud Database</div>
+                    <div style="font-weight:600;color:#1e6b37;margin-top:3px;">Supabase PostgreSQL</div>
+                </div>
+                <div style="background:#f8faf8;padding:12px;border-radius:10px;border:1px solid #e8f5e9;">
+                    <div style="color:#888;font-size:11px;text-transform:uppercase;font-weight:600;">Saved Chats</div>
+                    <div style="font-weight:600;color:#1e6b37;margin-top:3px;">${localSessions.length} Synchronized</div>
+                </div>
+            </div>
+            <div style="margin-top:14px;padding:10px 12px;background:#e8f5e9;border-radius:8px;font-size:12px;color:#2e7d32;display:flex;align-items:center;gap:8px;">
+                <i class="fas fa-shield-alt" style="font-size:14px;"></i>
+                <span>Your chat history and leaf diagnostics are backed up securely.</span>
+            </div>
+        `;
+    }
+    modal.style.display = 'flex';
+};
+
+window.closeProfileModal = function() {
+    const modal = document.getElementById('userProfileModal');
+    if (modal) modal.style.display = 'none';
 };
 
 document.addEventListener('DOMContentLoaded', () => {
