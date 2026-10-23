@@ -7,6 +7,9 @@ window.lastDiseaseDiagnosis = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     const fileInput = document.getElementById('leafFileInput');
+    const customFilePicker = document.getElementById('customFilePicker');
+    const btnBrowseFile = document.getElementById('btnBrowseFile');
+    const fileInputDisplayName = document.getElementById('fileInputDisplayName');
     const cameraBtn = document.getElementById('useCameraBtn');
     const cameraFileInput = document.getElementById('cameraFileInput');
     const emptyPreview = document.getElementById('emptyPreview');
@@ -18,7 +21,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const scanBtn = document.getElementById('scanBtn');
     const sampleBtns = document.querySelectorAll('.sample-pill-btn');
 
-    // 1. File Input Listener
+    // 1. Custom File Picker Click -> triggers hidden file input
+    if (customFilePicker && fileInput) {
+        customFilePicker.addEventListener('click', (e) => {
+            // Prevent duplicate triggers if clicking the button directly
+            if (e.target !== btnBrowseFile) {
+                fileInput.click();
+            }
+        });
+    }
+
+    if (btnBrowseFile && fileInput) {
+        btnBrowseFile.addEventListener('click', (e) => {
+            e.stopPropagation();
+            fileInput.click();
+        });
+    }
+
+    // File Input Listener
     if (fileInput) {
         fileInput.addEventListener('change', (e) => {
             if (e.target.files && e.target.files.length > 0) {
@@ -83,7 +103,22 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /**
- * Handle incoming file and display preview
+ * Safely truncate extra long filenames with middle ellipsis (e.g. MyLongName...jpg)
+ */
+function truncateFileName(name, maxLength = 32) {
+    if (!name || name.length <= maxLength) return name;
+    const extIndex = name.lastIndexOf('.');
+    const ext = extIndex !== -1 ? name.slice(extIndex) : '';
+    const base = extIndex !== -1 ? name.slice(0, extIndex) : name;
+    const keepChars = maxLength - ext.length - 3;
+    if (keepChars <= 4) return name.slice(0, maxLength - 3) + '...';
+    const front = Math.ceil(keepChars / 2);
+    const back = Math.floor(keepChars / 2);
+    return `${base.slice(0, front)}...${base.slice(-back)}${ext}`;
+}
+
+/**
+ * Handle incoming file and display preview safely without layout overflow
  */
 function handleFileSelection(file) {
     if (!file) return;
@@ -100,6 +135,7 @@ function handleFileSelection(file) {
 
     currentLeafFile = file;
 
+    const fileInputDisplayName = document.getElementById('fileInputDisplayName');
     const emptyPreview = document.getElementById('emptyPreview');
     const filledPreview = document.getElementById('filledPreview');
     const previewImg = document.getElementById('previewImg');
@@ -107,11 +143,18 @@ function handleFileSelection(file) {
     const previewFileSize = document.getElementById('previewFileSize');
     const scanBtn = document.getElementById('scanBtn');
 
+    // Update input display name
+    if (fileInputDisplayName) {
+        fileInputDisplayName.textContent = truncateFileName(file.name, 30);
+        fileInputDisplayName.title = file.name;
+    }
+
     // Read and display preview
     const reader = new FileReader();
     reader.onload = (e) => {
         previewImg.src = e.target.result;
-        previewFileName.textContent = file.name;
+        previewFileName.textContent = truncateFileName(file.name, 32);
+        previewFileName.title = file.name;
         previewFileSize.textContent = formatBytes(file.size);
         
         if (emptyPreview) emptyPreview.style.display = 'none';
@@ -128,8 +171,13 @@ function resetImageSelection() {
     currentLeafFile = null;
     const fileInput = document.getElementById('leafFileInput');
     const cameraFileInput = document.getElementById('cameraFileInput');
+    const fileInputDisplayName = document.getElementById('fileInputDisplayName');
     if (fileInput) fileInput.value = '';
     if (cameraFileInput) cameraFileInput.value = '';
+    if (fileInputDisplayName) {
+        fileInputDisplayName.textContent = 'No file chosen';
+        fileInputDisplayName.removeAttribute('title');
+    }
 
     const emptyPreview = document.getElementById('emptyPreview');
     const filledPreview = document.getElementById('filledPreview');
@@ -245,7 +293,7 @@ function renderDiagnosisResults(res) {
             const row = document.createElement('div');
             row.className = 'candidate-row';
             row.innerHTML = `
-                <span class="candidate-name">${escapeHtml(cand.disease_name)}</span>
+                <span class="candidate-name" title="${escapeHtml(cand.disease_name)}">${escapeHtml(cand.disease_name)}</span>
                 <span class="candidate-score">${cand.confidence.toFixed(1)}%</span>
             `;
             candidatesList.appendChild(row);
