@@ -60,12 +60,17 @@ function saveConversation() {
     const title = firstUser ? generateTopicName(firstUser.content) : 'Chat';
     const ts = Date.now();
 
+    const currentUserId = (typeof window.getCurrentAuthUser === 'function' && window.getCurrentAuthUser())
+        ? String(window.getCurrentAuthUser().id)
+        : 'guest';
+
     const timeLabel = formatTimestamp(ts);
     const convId = activeConversationId !== null ? String(activeConversationId) : ('conv_' + ts);
     activeConversationId = convId;
 
     const entry = {
         id: convId,
+        userId: currentUserId,
         title: title,
         timestamp: timeLabel,
         createdAt: ts,
@@ -201,6 +206,46 @@ function startNewChat() {
     if (body) body.innerHTML = '';
     appendMessage('bot', 'Hello! I am your CropPulse assistant. Ask me anything about crops, yield, soil health, or fertilizers.', false);
 }
+
+// Reset chat UI and wipe local sessions on sign out / account switch
+window.resetChatbotUI = function() {
+    activeConversationId = null;
+    SESSION_ID = 'session_' + Math.random().toString(36).substring(2, 11);
+    localStorage.setItem(SESSION_STORAGE_KEY, SESSION_ID);
+
+    chatHistory = [];
+    localStorage.removeItem(HISTORY_KEY);
+    localStorage.removeItem(SESSIONS_KEY);
+
+    const body = document.getElementById('chat-body');
+    if (body) {
+        body.innerHTML = '';
+        appendMessage('bot', 'Hello! I am your CropPulse assistant. Ask me anything about crops, yield, soil health, or fertilizers.', false);
+    }
+    renderHistorySidebar();
+};
+
+// Reload sessions from cloud for current authenticated user
+window.reloadChatbotSessions = function(newSessions) {
+    const list = Array.isArray(newSessions) ? newSessions : [];
+    localStorage.setItem(SESSIONS_KEY, JSON.stringify(list));
+
+    // If active conversation does not belong to the newly loaded sessions, reset chat screen
+    const activeExists = activeConversationId !== null && list.some(s => String(s.id) === String(activeConversationId));
+    if (!activeExists) {
+        activeConversationId = null;
+        SESSION_ID = 'session_' + Math.random().toString(36).substring(2, 11);
+        localStorage.setItem(SESSION_STORAGE_KEY, SESSION_ID);
+        chatHistory = [];
+        localStorage.removeItem(HISTORY_KEY);
+        const body = document.getElementById('chat-body');
+        if (body) {
+            body.innerHTML = '';
+            appendMessage('bot', 'Hello! I am your CropPulse assistant. Ask me anything about crops, yield, soil health, or fertilizers.', false);
+        }
+    }
+    renderHistorySidebar();
+};
 
 function escapeHtml(str) {
     return String(str)
