@@ -4,8 +4,12 @@ A modern Flask-based web interface for precision farming and yield optimization.
 """
 
 import pickle
+import os
 from pathlib import Path
 from typing import Any
+from dotenv import load_dotenv
+
+load_dotenv()
 
 import numpy as np
 import pandas as pd

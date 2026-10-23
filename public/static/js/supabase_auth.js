@@ -3,10 +3,9 @@
  * Manages Google OAuth Sign-in, user sessions, and cloud chat history persistence.
  */
 
-// Replace these placeholders with your Supabase project credentials,
-// or configure them via window.SUPABASE_CONFIG = { url: '...', anonKey: '...' }
-const DEFAULT_SUPABASE_URL = window.SUPABASE_URL || '';
-const DEFAULT_SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || '';
+// Default Supabase project credentials for CropPulse
+const DEFAULT_SUPABASE_URL = 'https://pqntyibigddhpbyvtzrr.supabase.co';
+const DEFAULT_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxbnR5aWJpZ2RkaHBieXZ0enJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI3NTM2NzAsImV4cCI6MjEwODMyOTY3MH0.OdpRU1E7T0Oj31bf6Z8xUxAmgdQDeTkyrZ4XcZwdilo';
 
 let supabaseClient = null;
 let currentAuthUser = null;
