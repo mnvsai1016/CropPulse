@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Home - CropPulse{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>The Future of Farming is Data-Driven</h1>
+        <p>Harness the power of machine learning to make informed decisions about crop selection, yield optimization, and soil health.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;">
+            <a href="{{ url_for('crop_recommendation') }}" class="cta-button">
+                <i class="fas fa-rocket"></i> Start Analysis
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="how-it-works">
+    <div class="container">
+        <h2 class="section-title">How It Works</h2>
+        <div class="steps-container">
+            <div class="step-card">
+                <div class="step-icon">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <h3>Enter Data</h3>
+                <p>Provide soil parameters (N, P, K, pH), climate conditions (temperature, humidity, rainfall), and location details for accurate predictions.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3>AI Analysis</h3>
+                <p>Our advanced machine learning models analyze your data using Random Forest algorithms trained on thousands of agricultural datasets.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-icon">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <h3>Actionable Insights</h3>
+                <p>Receive precise crop recommendations, yield predictions, and personalized fertilizer advice to optimize your farming operations.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features" style="padding: 3rem 0; background: var(--off-white);">
+    <div class="container">
+        <h2 class="section-title">Key Features</h2>
+        <div class="steps-container">
+            <div class="step-card">
+                <div class="step-icon" style="background: linear-gradient(135deg, #2196F3, #64B5F6);">
+                    <i class="fas fa-seedling"></i>
+                </div>
+                <h3>Crop Recommendation</h3>
+                <p>Get AI-powered crop suggestions based on your soil and climate conditions. Maximize yield potential with the right crop selection.</p>
+                <a href="{{ url_for('crop_recommendation') }}" class="cta-button" style="margin-top: 1rem; font-size: 0.9rem; padding: 0.5rem 1.5rem;">
+                    Try Now
+                </a>
+            </div>
+            <div class="step-card">
+                <div class="step-icon" style="background: linear-gradient(135deg, #FF9800, #FFB74D);">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Yield Prediction</h3>
+                <p>Predict crop yields with high accuracy. Plan your production, estimate revenue, and make data-driven business decisions.</p>
+                <a href="{{ url_for('yield_prediction') }}" class="cta-button" style="margin-top: 1rem; font-size: 0.9rem; padding: 0.5rem 1.5rem;">
+                    Try Now
+                </a>
+            </div>
+            <div class="step-card">
+                <div class="step-icon" style="background: linear-gradient(135deg, #9C27B0, #BA68C8);">
+                    <i class="fas fa-flask"></i>
+                </div>
+                <h3>Soil Health & Fertilizers</h3>
+                <p>Get AI-powered fertilizer recommendations and comprehensive soil health analysis to optimize crop nutrition.</p>
+                <a href="{{ url_for('soil_health') }}" class="cta-button" style="margin-top: 1rem; font-size: 0.9rem; padding: 0.5rem 1.5rem;">
+                    Try Now
+                </a>
+            </div>
+            <div class="step-card">
+                <div class="step-icon" style="background: linear-gradient(135deg, #2E7D32, #66BB6A);">
+                    <i class="fas fa-microscope"></i>
+                </div>
+                <h3>Plant Disease Scanner</h3>
+                <p>Upload leaf photographs to detect foliar diseases, fungal rusts, and blights with organic and chemical treatment advice.</p>
+                <a href="{{ url_for('disease_detection') }}" class="cta-button" style="margin-top: 1rem; font-size: 0.9rem; padding: 0.5rem 1.5rem;">
+                    Try Now
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+

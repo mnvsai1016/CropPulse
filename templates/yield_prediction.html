@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}Yield Prediction - CropPulse{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="hero" style="margin-bottom: 2rem; padding: 2rem 0;">
+        <div class="hero-content">
+            <h1 style="font-size: 2.5rem;">Crop Yield Prediction</h1>
+            <p>Predict crop yields and estimate revenue with AI-powered forecasting</p>
+        </div>
+    </div>
+
+    <div class="two-column">
+        <!-- Form Section -->
+        <div class="form-container">
+            <h2 style="color: var(--deep-green); margin-bottom: 1rem; font-size: 1.75rem;">
+                <i class="fas fa-clipboard-list"></i> Input Parameters
+            </h2>
+            
+            <form id="yieldForm">
+                <div class="form-group">
+                    <label class="form-label" for="state">
+                        <i class="fas fa-map-marker-alt"></i> State
+                    </label>
+                    <select id="state" name="state" class="form-select" required>
+                        <option value="">Select State</option>
+                        {% for s in states %}
+                        <option value="{{ s }}">{{ s }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="district">
+                        <i class="fas fa-map-pin"></i> District (Optional)
+                    </label>
+                    <input type="text" id="district" name="district" class="form-input" 
+                           placeholder="Enter district name (optional)">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="season">
+                        <i class="fas fa-calendar-alt"></i> Season
+                    </label>
+                    <select id="season" name="season" class="form-select" required>
+                        <option value="">Select Season</option>
+                        {% for s in seasons %}
+                        <option value="{{ s }}">{{ s }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="crop">
+                        <i class="fas fa-seedling"></i> Crop
+                    </label>
+                    <select id="crop" name="crop" class="form-select" required>
+                        <option value="">Select Crop</option>
+                        {% if yield_options %}
+                            {% for opt in yield_options %}
+                            <option value="{{ opt.value }}" {% if (preselected_crop and (opt.value|lower == preselected_crop|lower or opt.label|lower == preselected_crop|lower)) or (mapped_crop and opt.value|lower|trim == mapped_crop|lower|trim) %}selected{% endif %}>
+                                {{ opt.label }}
+                            </option>
+                            {% endfor %}
+                        {% else %}
+                            {% for c in crops %}
+                            <option value="{{ c }}" {% if preselected_crop and (c|lower == preselected_crop|lower or (mapped_crop and c|lower|trim == mapped_crop|lower|trim)) %}selected{% endif %}>
+                                {{ c }}
+                            </option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="area">
+                        <i class="fas fa-ruler-combined"></i> Area (Hectares)
+                    </label>
+                    <div class="input-icon">
+                        <i class="fas fa-map"></i>
+                        <input type="number" id="area" name="area" class="form-input" 
+                               placeholder="Enter area in hectares" min="0.1" step="0.1" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary" id="predictBtn">
+                    <i class="fas fa-chart-line"></i> Predict Yield
+                </button>
+            </form>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsContainer" class="result-container hidden">
+            <!-- Yield Prediction Card -->
+            <div class="stat-card">
+                <div class="stat-value" id="totalYield">-</div>
+                <div class="stat-label">Total Yield (Tonnes)</div>
+                <div class="stat-sub" id="yieldPerHectare">-</div>
+            </div>
+
+            <!-- Revenue Calculator -->
+            <div class="calculator-section">
+                <h3>
+                    <i class="fas fa-calculator"></i> Estimated Revenue Calculator
+                </h3>
+                <div class="form-group">
+                    <label class="form-label" for="marketPrice">
+                        Market Price per Tonne (₹)
+                    </label>
+                    <div class="input-icon">
+                        <i class="fas fa-rupee-sign"></i>
+                        <input type="number" id="marketPrice" class="form-input" 
+                               placeholder="Enter market price" min="0" step="100">
+                    </div>
+                </div>
+                <button type="button" class="btn-primary" id="calculateBtn" style="margin-top: 1rem;">
+                    <i class="fas fa-calculator"></i> Calculate Revenue
+                </button>
+                <div class="calculator-result hidden" id="revenueResult">
+                    <i class="fas fa-rupee-sign"></i> <span id="revenueAmount">0</span>
+                </div>
+            </div>
+
+            <button type="button" class="btn-primary btn-chatbot-accent" style="margin-top: 1rem;" onclick="if(typeof toggleChat === 'function') toggleChat();">
+                <i class="fas fa-comments"></i> Ask CropPulse Assistant
+            </button>
+        </div>
+
+        <!-- Placeholder when no results -->
+        <div id="placeholderContainer" class="result-container" style="display: flex; align-items: center; justify-content: center; min-height: 400px;">
+            <div style="text-align: center; color: var(--medium-gray);">
+                <i class="fas fa-chart-line" style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                <p style="font-size: 1.1rem;">Fill in the form and click "Predict Yield" to see predictions</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/yield_prediction.js') }}"></script>
+{% endblock %}
+

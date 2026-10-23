@@ -1,0 +1,765 @@
+{
+  "crop_tests": [
+    {
+      "crop": "rice",
+      "inputs": {
+        "n": 80,
+        "p": 40,
+        "k": 40,
+        "temperature": 24.0,
+        "humidity": 82.0,
+        "ph": 6.5,
+        "rainfall": 240.0
+      },
+      "http_status": 200,
+      "predicted_crop": "rice",
+      "confidence": 100.0,
+      "advice": "N levels are optimal. P levels are optimal. K levels are optimal. Soil pH is optimal for most crops.",
+      "match": true,
+      "status": "PASS"
+    },
+    {
+      "crop": "maize",
+      "inputs": {
+        "n": 80,
+        "p": 45,
+        "k": 20,
+        "temperature": 23.0,
+        "humidity": 65.0,
+        "ph": 6.5,
+        "rainfall": 80.0
+      },
+      "http_status": 200,
+      "predicted_crop": "maize",
+      "confidence": 100.0,
+      "advice": "N levels are optimal. P levels are optimal. K levels are low. Add Potash or Muriate of Potash. Soil pH is optimal for most crops.",
+      "match": true,
+      "status": "PASS"
+    },
+    {
+      "crop": "chickpea",
+      "inputs": {
+        "n": 40,
+        "p": 68,
+        "k": 80,
+        "temperature": 19.0,
+        "humidity": 17.0,
+        "ph": 7.3,
+        "rainfall": 80.0
+      },
+      "http_status": 200,
+      "predicted_crop": "chickpea",
+      "confidence": 100.0,
+      "advice": "N levels are low. Add Urea or Ammonium Nitrate. P levels are high. Reduce phosphorus fertilizers. K levels are optimal. Soil pH is optimal for most crops.",
+      "match": true,
+      "status": "PASS"
+    },
+    {
+      "crop": "kidneybeans",
+      "inputs": {
+        "n": 20,
+        "p": 68,
+        "k": 20,
+        "temperature": 20.0,
+        "humidity": 22.0,
+        "ph": 5.7,
+        "rainfall": 105.0
+      },
+      "http_status": 200,
+      "predicted_crop": "kidneybeans",
+      "confidence": 100.0,
+      "advice": "N levels are low. Add Urea or Ammonium Nitrate. P levels are high. Reduce phosphorus fertilizers. K levels are low. Add Potash or Muriate of Potash. Soil is acidic. Consider adding lime to raise pH.",
+      "match": true,
+      "status": "PASS"
+    },
+    {
+      "crop": "pigeonpeas",
+      "inputs": {
+        "n": 20,
+        "p": 68,
+        "k": 20,
+        "temperature": 28.0,
+        "humidity": 55.0,
+        "ph": 5.8,
+        "rainfall": 150.0
+      },
+      "http_status": 200,
+      "predicted_crop": "pigeonpeas",
+      "confidence": 100.0,
+      "advice": "N levels are low. Add Urea or Ammonium Nitrate. P levels are high. Reduce phosphorus fertilizers. K levels are low. Add Potash or Muriate of Potash. Soil is acidic. Consider adding lime to raise pH.",
+      "match": true,
+      "status": "PASS"
+    },
+    {
+      "crop": "mothbeans",
+      "inputs": {
+        "n": 22,
+        "p": 48,
+        "k": 20,
+        "temperature": 28.0,
+        "humidity": 53.0,
+        "ph": 6.8,
+        "rainfall": 51.0
+      },
+      "http_status": 200,
+      "predicted_crop": "mothbeans",
+      "confidence": 89.0,
+      "advice": "N levels are low. Add Urea or Ammonium Nitrate. P levels are optimal. K levels are low. Add Potash or Muriate of Potash. Soil pH is optimal for most crops.",
+      "match": true,
+      "status": "PASS"
+    },
+    {
+      "crop": "mungbean",
+      "inputs": {
+        "n": 21,
+        "p": 47,
+        "k": 20,
+        "temperature": 28.5,
+        "humidity": 86.0,
+        "ph": 6.7,
+        "rainfall": 49.0
+      },
+      "http_status": 200,
+      "predicted_crop": "mungbean",
+      "confidence": 100.0,
+      "advice": "N levels are low. Add Urea or Ammonium Nitrate. P levels are optimal. K levels are low. Add Potash or Muriate of Potash. Soil pH is optimal for most crops.",
+      "match": true,
+      "status": "PASS"
+    },
+    {
+      "crop": "blackgram",
+      "inputs": {
+        "n": 40,
+        "p": 68,
+        "k": 20,
+        "temperature": 30.0,
+        "humidity": 65.0,
+        "ph": 7.2,
+        "rainfall": 68.0
+      },
+      "http_status": 200,
+      "predicted_crop": "blackgram",
+      "confidence": 100.0,
+      "advice": "N levels are low. Add Urea or Ammonium Nitrate. P levels are high. Reduce phosphorus fertilizers. K levels are low. Add Potash or Muriate of Potash. Soil pH is optimal for most crops.",
+      "match": true,
+      "status": "PASS"
+    },
+    {
+      "crop": "lentil",
+      "inputs": {
+        "n": 19,
+        "p": 68,
+        "k": 19,
+        "temperature": 25.0,
+        "humidity": 65.0,
+        "ph": 6.9,
+        "rainfall": 46.0
+      },
+      "http_status": 200,
+      "predicted_crop": "lentil",
+      "confidence": 99.0,
+      "advice": "N levels are low. Add Urea or Ammonium Nitrate. P levels are high. Reduce phosphorus fertilizers. K levels are low. Add Potash or Muriate of Potash. Soil pH is optimal for most crops.",
+      "match": true,
+      "status": "PASS"
+    },
+    {
+      "crop": "pomegranate",
+      "inputs": {
+        "n": 22,
+        "p": 20,
+        "k": 40,
+        "temperature": 22.0,
+        "humidity": 90.0,
+        "ph": 6.4,
+        "rainfall": 107.0
+      },
+      "http_status": 200,
+      "predicted_crop": "pomegranate",
+      "confidence": 99.0,
+      "advice": "N levels are low. Add Urea or Ammonium Nitrate. P levels are low. Add Superphosphate or DAP. K levels are optimal. Soil pH is optimal for most crops.",
+      "match": true,
+      "status": "PASS"
+    },
+    {
+      "crop": "banana",
+      "inputs": {
+        "n": 100,
+        "p": 82,
+        "k": 50,
+        "temperature": 27.0,
+        "humidity": 80.0,
+        "ph": 6.0,
+        "rainfall": 105.0
+      },
+      "http_status": 200,
+      "predicted_crop": "banana",
+      "confidence": 100.0,
+      "advice": "N levels are optimal. P levels are high. Reduce phosphorus fertilizers. K levels are optimal. Soil pH is optimal for most crops.",
+      "match": true,
+      "status": "PASS"
+    },
+    {
+      "crop": "mango",
+      "inputs": {
+        "n": 20,
+        "p": 27,
+        "k": 30,
+        "temperature": 31.0,
+        "humidity": 50.0,
+        "ph": 5.7,
+        "rainfall": 95.0
+      },
+      "http_status": 200,
+      "predicted_crop": "mango",
+      "confidence": 100.0,
+      "advice": "N levels are low. Add Urea or Ammonium Nitrate. P levels are low. Add Superphosphate or DAP. K levels are optimal. Soil is acidic. Consider adding lime to raise pH.",
+      "match": true,
+      "status": "PASS"
+    },
+    {
+      "crop": "grapes",
+      "inputs": {
+        "n": 23,
+        "p": 133,
+        "k": 200,
+        "temperature": 24.0,
+        "humidity": 82.0,
+        "ph": 6.0,
+        "rainfall": 69.0
+      },
+      "http_status": 200,
+      "predicted_crop": "grapes",
+      "confidence": 82.0,
+      "advice": "N levels are low. Add Urea or Ammonium Nitrate. P levels are high. Reduce phosphorus fertilizers. K levels are high. Reduce potassium fertilizers. Soil pH is optimal for most crops.",
+      "match": true,
+      "status": "PASS"
+    },
+    {
+      "crop": "watermelon",
+      "inputs": {
+        "n": 99,
+        "p": 18,
+        "k": 50,
+        "temperature": 26.0,
+        "humidity": 85.0,
+        "ph": 6.5,
+        "rainfall": 51.0
+      },
+      "http_status": 200,
+      "predicted_crop": "watermelon",
+      "confidence": 100.0,
+      "advice": "N levels are optimal. P levels are low. Add Superphosphate or DAP. K levels are optimal. Soil pH is optimal for most crops.",
+      "match": true,
+      "status": "PASS"
+    },
+    {
+      "crop": "muskmelon",
+      "inputs": {
+        "n": 100,
+        "p": 18,
+        "k": 50,
+        "temperature": 28.5,
+        "humidity": 92.0,
+        "ph": 6.4,
+        "rainfall": 25.0
+      },
+      "http_status": 200,
+      "predicted_crop": "muskmelon",
+      "confidence": 100.0,
+      "advice": "N levels are optimal. P levels are low. Add Superphosphate or DAP. K levels are optimal. Soil pH is optimal for most crops.",
+      "match": true,
+      "status": "PASS"
+    },
+    {
+      "crop": "apple",
+      "inputs": {
+        "n": 22,
+        "p": 130,
+        "k": 200,
+        "temperature": 22.0,
+        "humidity": 92.0,
+        "ph": 6.0,
+        "rainfall": 115.0
+      },
+      "http_status": 200,
+      "predicted_crop": "apple",
+      "confidence": 69.0,
+      "advice": "N levels are low. Add Urea or Ammonium Nitrate. P levels are high. Reduce phosphorus fertilizers. K levels are high. Reduce potassium fertilizers. Soil pH is optimal for most crops.",
+      "match": true,
+      "status": "PASS"
+    },
+    {
+      "crop": "orange",
+      "inputs": {
+        "n": 20,
+        "p": 16,
+        "k": 10,
+        "temperature": 23.0,
+        "humidity": 92.0,
+        "ph": 7.0,
+        "rainfall": 110.0
+      },
+      "http_status": 200,
+      "predicted_crop": "orange",
+      "confidence": 99.0,
+      "advice": "N levels are low. Add Urea or Ammonium Nitrate. P levels are low. Add Superphosphate or DAP. K levels are low. Add Potash or Muriate of Potash. Soil pH is optimal for most crops.",
+      "match": true,
+      "status": "PASS"
+    },
+    {
+      "crop": "papaya",
+      "inputs": {
+        "n": 50,
+        "p": 59,
+        "k": 50,
+        "temperature": 34.0,
+        "humidity": 92.0,
+        "ph": 6.7,
+        "rainfall": 142.0
+      },
+      "http_status": 200,
+      "predicted_crop": "papaya",
+      "confidence": 100.0,
+      "advice": "N levels are optimal. P levels are optimal. K levels are optimal. Soil pH is optimal for most crops.",
+      "match": true,
+      "status": "PASS"
+    },
+    {
+      "crop": "coconut",
+      "inputs": {
+        "n": 22,
+        "p": 17,
+        "k": 30,
+        "temperature": 27.0,
+        "humidity": 95.0,
+        "ph": 6.0,
+        "rainfall": 176.0
+      },
+      "http_status": 200,
+      "predicted_crop": "coconut",
+      "confidence": 100.0,
+      "advice": "N levels are low. Add Urea or Ammonium Nitrate. P levels are low. Add Superphosphate or DAP. K levels are optimal. Soil pH is optimal for most crops.",
+      "match": true,
+      "status": "PASS"
+    },
+    {
+      "crop": "cotton",
+      "inputs": {
+        "n": 120,
+        "p": 46,
+        "k": 20,
+        "temperature": 24.0,
+        "humidity": 80.0,
+        "ph": 6.8,
+        "rainfall": 80.0
+      },
+      "http_status": 200,
+      "predicted_crop": "cotton",
+      "confidence": 100.0,
+      "advice": "N levels are high. Reduce nitrogen fertilizers. P levels are optimal. K levels are low. Add Potash or Muriate of Potash. Soil pH is optimal for most crops.",
+      "match": true,
+      "status": "PASS"
+    },
+    {
+      "crop": "jute",
+      "inputs": {
+        "n": 78,
+        "p": 46,
+        "k": 40,
+        "temperature": 25.0,
+        "humidity": 80.0,
+        "ph": 6.7,
+        "rainfall": 175.0
+      },
+      "http_status": 200,
+      "predicted_crop": "jute",
+      "confidence": 96.0,
+      "advice": "N levels are optimal. P levels are optimal. K levels are optimal. Soil pH is optimal for most crops.",
+      "match": true,
+      "status": "PASS"
+    },
+    {
+      "crop": "coffee",
+      "inputs": {
+        "n": 101,
+        "p": 29,
+        "k": 30,
+        "temperature": 25.5,
+        "humidity": 58.0,
+        "ph": 6.8,
+        "rainfall": 158.0
+      },
+      "http_status": 200,
+      "predicted_crop": "coffee",
+      "confidence": 100.0,
+      "advice": "N levels are high. Reduce nitrogen fertilizers. P levels are low. Add Superphosphate or DAP. K levels are optimal. Soil pH is optimal for most crops.",
+      "match": true,
+      "status": "PASS"
+    }
+  ],
+  "boundary_tests": [
+    {
+      "category": "pH Range Validation",
+      "description": "Extreme Low pH (< 0)",
+      "payload": {
+        "n": 50,
+        "p": 50,
+        "k": 50,
+        "temperature": 25,
+        "humidity": 50,
+        "ph": -1.5,
+        "rainfall": 100
+      },
+      "expected_status": 400,
+      "actual_status": 400,
+      "response": {
+        "error": "pH must be between 0 and 14",
+        "success": false
+      },
+      "status": "PASS"
+    },
+    {
+      "category": "pH Range Validation",
+      "description": "Extreme High pH (> 14)",
+      "payload": {
+        "n": 50,
+        "p": 50,
+        "k": 50,
+        "temperature": 25,
+        "humidity": 50,
+        "ph": 15.0,
+        "rainfall": 100
+      },
+      "expected_status": 400,
+      "actual_status": 400,
+      "response": {
+        "error": "pH must be between 0 and 14",
+        "success": false
+      },
+      "status": "PASS"
+    },
+    {
+      "category": "pH Range Validation",
+      "description": "Boundary Lower Bound pH (0.0)",
+      "payload": {
+        "n": 50,
+        "p": 50,
+        "k": 50,
+        "temperature": 25,
+        "humidity": 50,
+        "ph": 0.0,
+        "rainfall": 100
+      },
+      "expected_status": 200,
+      "actual_status": 200,
+      "response": {
+        "result": {
+          "advice": "N levels are optimal. P levels are optimal. K levels are optimal. Soil is acidic. Consider adding lime to raise pH.",
+          "confidence": 24.0,
+          "crop": "mango"
+        },
+        "success": true
+      },
+      "status": "PASS"
+    },
+    {
+      "category": "pH Range Validation",
+      "description": "Boundary Upper Bound pH (14.0)",
+      "payload": {
+        "n": 50,
+        "p": 50,
+        "k": 50,
+        "temperature": 25,
+        "humidity": 50,
+        "ph": 14.0,
+        "rainfall": 100
+      },
+      "expected_status": 200,
+      "actual_status": 200,
+      "response": {
+        "result": {
+          "advice": "N levels are optimal. P levels are optimal. K levels are optimal. Soil is alkaline. Consider adding sulfur or organic matter to lower pH.",
+          "confidence": 23.0,
+          "crop": "papaya"
+        },
+        "success": true
+      },
+      "status": "PASS"
+    },
+    {
+      "category": "Humidity Range Validation",
+      "description": "Extreme Low Humidity (< 0)",
+      "payload": {
+        "n": 50,
+        "p": 50,
+        "k": 50,
+        "temperature": 25,
+        "humidity": -10.0,
+        "ph": 6.5,
+        "rainfall": 100
+      },
+      "expected_status": 400,
+      "actual_status": 400,
+      "response": {
+        "error": "Humidity must be between 0 and 100",
+        "success": false
+      },
+      "status": "PASS"
+    },
+    {
+      "category": "Humidity Range Validation",
+      "description": "Extreme High Humidity (> 100)",
+      "payload": {
+        "n": 50,
+        "p": 50,
+        "k": 50,
+        "temperature": 25,
+        "humidity": 110.0,
+        "ph": 6.5,
+        "rainfall": 100
+      },
+      "expected_status": 400,
+      "actual_status": 400,
+      "response": {
+        "error": "Humidity must be between 0 and 100",
+        "success": false
+      },
+      "status": "PASS"
+    },
+    {
+      "category": "Humidity Range Validation",
+      "description": "Boundary Lower Bound Humidity (0.0)",
+      "payload": {
+        "n": 50,
+        "p": 50,
+        "k": 50,
+        "temperature": 25,
+        "humidity": 0.0,
+        "ph": 6.5,
+        "rainfall": 100
+      },
+      "expected_status": 200,
+      "actual_status": 200,
+      "response": {
+        "result": {
+          "advice": "N levels are optimal. P levels are optimal. K levels are optimal. Soil pH is optimal for most crops.",
+          "confidence": 51.0,
+          "crop": "kidneybeans"
+        },
+        "success": true
+      },
+      "status": "PASS"
+    },
+    {
+      "category": "Humidity Range Validation",
+      "description": "Boundary Upper Bound Humidity (100.0)",
+      "payload": {
+        "n": 50,
+        "p": 50,
+        "k": 50,
+        "temperature": 25,
+        "humidity": 100.0,
+        "ph": 6.5,
+        "rainfall": 100
+      },
+      "expected_status": 200,
+      "actual_status": 200,
+      "response": {
+        "result": {
+          "advice": "N levels are optimal. P levels are optimal. K levels are optimal. Soil pH is optimal for most crops.",
+          "confidence": 94.0,
+          "crop": "papaya"
+        },
+        "success": true
+      },
+      "status": "PASS"
+    },
+    {
+      "category": "Negative Values Handling",
+      "description": "Negative Nitrogen (N = -25)",
+      "payload": {
+        "n": -25,
+        "p": 50,
+        "k": 50,
+        "temperature": 25,
+        "humidity": 50,
+        "ph": 6.5,
+        "rainfall": 100
+      },
+      "expected_status": "200 or 400",
+      "actual_status": 200,
+      "response": {
+        "result": {
+          "advice": "N levels are low. Add Urea or Ammonium Nitrate. P levels are optimal. K levels are optimal. Soil pH is optimal for most crops.",
+          "confidence": 51.0,
+          "crop": "mango"
+        },
+        "success": true
+      },
+      "status": "PASS"
+    },
+    {
+      "category": "Negative Values Handling",
+      "description": "Negative Phosphorus (P = -15)",
+      "payload": {
+        "n": 50,
+        "p": -15,
+        "k": 50,
+        "temperature": 25,
+        "humidity": 50,
+        "ph": 6.5,
+        "rainfall": 100
+      },
+      "expected_status": "200 or 400",
+      "actual_status": 200,
+      "response": {
+        "result": {
+          "advice": "N levels are optimal. P levels are low. Add Superphosphate or DAP. K levels are optimal. Soil pH is optimal for most crops.",
+          "confidence": 72.0,
+          "crop": "mango"
+        },
+        "success": true
+      },
+      "status": "PASS"
+    },
+    {
+      "category": "Negative Values Handling",
+      "description": "Negative Potassium (K = -30)",
+      "payload": {
+        "n": 50,
+        "p": 50,
+        "k": -30,
+        "temperature": 25,
+        "humidity": 50,
+        "ph": 6.5,
+        "rainfall": 100
+      },
+      "expected_status": "200 or 400",
+      "actual_status": 200,
+      "response": {
+        "result": {
+          "advice": "N levels are optimal. P levels are optimal. K levels are low. Add Potash or Muriate of Potash. Soil pH is optimal for most crops.",
+          "confidence": 46.0,
+          "crop": "pigeonpeas"
+        },
+        "success": true
+      },
+      "status": "PASS"
+    },
+    {
+      "category": "Negative Values Handling",
+      "description": "Negative Rainfall (Rainfall = -50)",
+      "payload": {
+        "n": 50,
+        "p": 50,
+        "k": 50,
+        "temperature": 25,
+        "humidity": 50,
+        "ph": 6.5,
+        "rainfall": -50
+      },
+      "expected_status": "200 or 400",
+      "actual_status": 200,
+      "response": {
+        "result": {
+          "advice": "N levels are optimal. P levels are optimal. K levels are optimal. Soil pH is optimal for most crops.",
+          "confidence": 44.0,
+          "crop": "muskmelon"
+        },
+        "success": true
+      },
+      "status": "PASS"
+    },
+    {
+      "category": "Negative Values Handling",
+      "description": "All Negative NPK + Rainfall",
+      "payload": {
+        "n": -40,
+        "p": -40,
+        "k": -40,
+        "temperature": 25,
+        "humidity": 50,
+        "ph": 6.5,
+        "rainfall": -40
+      },
+      "expected_status": "200 or 400",
+      "actual_status": 200,
+      "response": {
+        "result": {
+          "advice": "N levels are low. Add Urea or Ammonium Nitrate. P levels are low. Add Superphosphate or DAP. K levels are low. Add Potash or Muriate of Potash. Soil pH is optimal for most crops.",
+          "confidence": 48.0,
+          "crop": "mothbeans"
+        },
+        "success": true
+      },
+      "status": "PASS"
+    },
+    {
+      "category": "Missing Fields & Malformed JSON",
+      "description": "Empty Body with JSON Content-Type",
+      "payload": "",
+      "expected_status": 400,
+      "actual_status": 400,
+      "response": {
+        "error": "400 Bad Request: The browser (or proxy) sent a request that this server could not understand.",
+        "success": false
+      },
+      "status": "PASS"
+    },
+    {
+      "category": "Missing Fields & Malformed JSON",
+      "description": "Malformed JSON Syntax",
+      "payload": "{\"n\": 50, \"p\": 50, malformed",
+      "expected_status": 400,
+      "actual_status": 400,
+      "response": {
+        "error": "400 Bad Request: The browser (or proxy) sent a request that this server could not understand.",
+        "success": false
+      },
+      "status": "PASS"
+    },
+    {
+      "category": "Missing Fields & Malformed JSON",
+      "description": "String Type for Numeric N",
+      "payload": "{\"n\": \"invalid_string\", \"p\": 50, \"k\": 50",
+      "expected_status": 400,
+      "actual_status": 400,
+      "response": {
+        "error": "Invalid input: could not convert string to float: 'invalid_string'",
+        "success": false
+      },
+      "status": "PASS"
+    },
+    {
+      "category": "Missing Fields & Malformed JSON",
+      "description": "Empty JSON Object ({})",
+      "payload": "{}",
+      "expected_status": 400,
+      "actual_status": 400,
+      "response": {
+        "error": "No JSON data provided",
+        "success": false
+      },
+      "status": "PASS"
+    },
+    {
+      "category": "Missing Fields & Malformed JSON",
+      "description": "Partial Payload (Only N & P)",
+      "payload": "{\"n\": 80, \"p\": 40}",
+      "expected_status": 200,
+      "actual_status": 200,
+      "response": {
+        "result": {
+          "advice": "N levels are optimal. P levels are optimal. K levels are low. Add Potash or Muriate of Potash. Soil pH is optimal for most crops.",
+          "confidence": 28.0,
+          "crop": "muskmelon"
+        },
+        "success": true
+      },
+      "status": "PASS"
+    }
+  ],
+  "total_crops_tested": 22,
+  "total_boundary_cases_tested": 18,
+  "all_crops_matched": true
+}

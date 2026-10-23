@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}Crop Recommendation - CropPulse{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="hero" style="margin-bottom: 2rem; padding: 2rem 0;">
+        <div class="hero-content">
+            <h1 style="font-size: 2.5rem;">Smart Crop Recommendation</h1>
+            <p>Enter your soil and climate parameters to get AI-powered crop recommendations</p>
+        </div>
+    </div>
+
+    <div class="two-column">
+        <!-- Form Section -->
+        <div class="form-container">
+            <h2 style="color: var(--deep-green); margin-bottom: 1rem; font-size: 1.75rem;">
+                <i class="fas fa-clipboard-list"></i> Input Parameters
+            </h2>
+            
+            <form id="cropForm">
+                <div class="form-group">
+                    <label class="form-label" for="n">
+                        <i class="fas fa-atom"></i> Nitrogen (N) - ppm
+                    </label>
+                    <div class="input-icon">
+                        <i class="fas fa-flask"></i>
+                        <input type="number" id="n" name="n" class="form-input" 
+                               placeholder="Enter N value (0-200)" min="0" max="200" step="0.1" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="p">
+                        <i class="fas fa-atom"></i> Phosphorus (P) - ppm
+                    </label>
+                    <div class="input-icon">
+                        <i class="fas fa-flask"></i>
+                        <input type="number" id="p" name="p" class="form-input" 
+                               placeholder="Enter P value (0-200)" min="0" max="200" step="0.1" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="k">
+                        <i class="fas fa-atom"></i> Potassium (K) - ppm
+                    </label>
+                    <div class="input-icon">
+                        <i class="fas fa-flask"></i>
+                        <input type="number" id="k" name="k" class="form-input" 
+                               placeholder="Enter K value (0-200)" min="0" max="200" step="0.1" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="temperature">
+                        <i class="fas fa-thermometer-half"></i> Temperature (°C)
+                    </label>
+                    <div class="input-icon">
+                        <i class="fas fa-temperature-high"></i>
+                        <input type="number" id="temperature" name="temperature" class="form-input" 
+                               placeholder="Enter temperature" min="-10" max="50" step="0.1" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="humidity">
+                        <i class="fas fa-tint"></i> Humidity (%)
+                    </label>
+                    <div class="input-icon">
+                        <i class="fas fa-water"></i>
+                        <input type="number" id="humidity" name="humidity" class="form-input" 
+                               placeholder="Enter humidity (0-100)" min="0" max="100" step="0.1" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="ph">
+                        <i class="fas fa-vial"></i> pH Level
+                    </label>
+                    <div class="input-icon">
+                        <i class="fas fa-flask"></i>
+                        <input type="number" id="ph" name="ph" class="form-input" 
+                               placeholder="Enter pH (0-14)" min="0" max="14" step="0.1" required>
+                    </div>
+                    <small style="color: var(--medium-gray); font-size: 0.85rem;">
+                        Optimal range: 6.0 - 8.0
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="rainfall">
+                        <i class="fas fa-cloud-rain"></i> Rainfall (mm)
+                    </label>
+                    <div class="input-icon">
+                        <i class="fas fa-cloud"></i>
+                        <input type="number" id="rainfall" name="rainfall" class="form-input" 
+                               placeholder="Enter rainfall" min="0" step="0.1" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary" id="analyzeBtn">
+                    <i class="fas fa-search"></i> Analyze & Recommend
+                </button>
+            </form>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsContainer" class="result-container hidden">
+            <div class="result-card">
+                <div class="crop-image" id="cropImage">
+                    <i class="fas fa-seedling"></i>
+                </div>
+                <h2 class="crop-name" id="cropName">-</h2>
+
+                <button type="button"
+                        id="predictYieldBtn"
+                        class="btn-primary"
+                        style="max-width: 260px; margin: 0 auto var(--spacing-md); display: block;"
+                        disabled>
+                    <i class="fas fa-chart-line"></i> Predict Yield for this Crop
+                </button>
+
+                <button type="button"
+                        id="getSoilHealthBtn"
+                        class="btn-primary"
+                        style="max-width: 260px; margin: 0 auto var(--spacing-md); display: block;"
+                        disabled>
+                    <i class="fas fa-microscope"></i> Get Soil Health Analysis
+                </button>
+
+                <button type="button"
+                        id="askChatbotBtn"
+                        class="btn-primary btn-chatbot-accent"
+                        style="max-width: 260px; margin: 0 auto; display: block;"
+                        disabled
+                        onclick="if(typeof toggleChat === 'function') toggleChat();">
+                    <i class="fas fa-comments"></i> Ask CropPulse Assistant
+                </button>
+            </div>
+        </div>
+
+        <!-- Placeholder when no results -->
+        <div id="placeholderContainer" class="result-container" style="display: flex; align-items: center; justify-content: center; min-height: 400px;">
+            <div style="text-align: center; color: var(--medium-gray);">
+                <i class="fas fa-seedling" style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                <p style="font-size: 1.1rem;">Fill in the form and click "Analyze & Recommend" to see crop recommendations</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/crop_recommendation.js') }}"></script>
+{% endblock %}
+
+

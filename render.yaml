@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: agri-guide
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: bash startup.sh
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.16
+      - key: FLASK_ENV
+        value: production
+    disk:
+      name: agri-guide-disk
+      mountPath: /opt/render/project/src
+      sizeGB: 1

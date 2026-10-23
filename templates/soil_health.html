@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block title %}Soil Health & Fertilizers - CropPulse{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="hero" style="margin-bottom: 2rem; padding: 2rem 0;">
+        <div class="hero-content">
+            <h1 style="font-size: 2.5rem;">Soil Health & Fertilizer Recommendations</h1>
+            <p>Get AI-powered soil analysis and precise fertilizer recommendations for optimal crop nutrition</p>
+        </div>
+    </div>
+
+    <div class="two-column">
+        <!-- Form Section -->
+        <div class="form-container">
+            <h2 style="color: var(--deep-green); margin-bottom: 1rem; font-size: 1.75rem;">
+                <i class="fas fa-clipboard-list"></i> Input Parameters
+            </h2>
+            
+            <form id="soilHealthForm">
+                <div class="form-group">
+                    <label class="form-label" for="nitrogen">
+                        <i class="fas fa-atom"></i> Nitrogen (N) - ppm
+                    </label>
+                    <div class="input-icon">
+                        <i class="fas fa-flask"></i>
+                        <input type="number" id="nitrogen" name="nitrogen" class="form-input" 
+                               placeholder="Enter N value (0-200)" min="0" max="200" step="0.1" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="phosphorous">
+                        <i class="fas fa-atom"></i> Phosphorous (P) - ppm
+                    </label>
+                    <div class="input-icon">
+                        <i class="fas fa-flask"></i>
+                        <input type="number" id="phosphorous" name="phosphorous" class="form-input" 
+                               placeholder="Enter P value (0-200)" min="0" max="200" step="0.1" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="potassium">
+                        <i class="fas fa-atom"></i> Potassium (K) - ppm
+                    </label>
+                    <div class="input-icon">
+                        <i class="fas fa-flask"></i>
+                        <input type="number" id="potassium" name="potassium" class="form-input" 
+                               placeholder="Enter K value (0-200)" min="0" max="200" step="0.1" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="temperature">
+                        <i class="fas fa-thermometer-half"></i> Temperature (°C)
+                    </label>
+                    <div class="input-icon">
+                        <i class="fas fa-temperature-high"></i>
+                        <input type="number" id="temperature" name="temperature" class="form-input" 
+                               placeholder="Enter temperature (0-50°C)" min="0" max="50" step="0.1" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="humidity">
+                        <i class="fas fa-tint"></i> Humidity (%)
+                    </label>
+                    <div class="input-icon">
+                        <i class="fas fa-water"></i>
+                        <input type="number" id="humidity" name="humidity" class="form-input" 
+                               placeholder="Enter humidity (0-100%)" min="0" max="100" step="0.1" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="cropType">
+                        <i class="fas fa-seedling"></i> Crop Type
+                    </label>
+                    <select id="cropType" name="cropType" class="form-select" required>
+                        <option value="">Select Crop Type</option>
+                        {% if fertilizer_options %}
+                            {% for opt in fertilizer_options %}
+                            <option value="{{ opt.value }}" {% if (preselected_crop and preselected_crop|lower == opt.value|lower) or (mapped_crop and mapped_crop == opt.value) %}selected{% endif %}>
+                                {{ opt.label }}
+                            </option>
+                            {% endfor %}
+                        {% else %}
+                            <option value="Paddy" {% if (preselected_crop and preselected_crop|lower in ['paddy', 'rice']) or (mapped_crop and mapped_crop == 'Paddy') %}selected{% endif %}>🌾 Paddy / Rice</option>
+                            <option value="Wheat" {% if (preselected_crop and preselected_crop|lower == 'wheat') or (mapped_crop and mapped_crop == 'Wheat') %}selected{% endif %}>🌾 Wheat</option>
+                            <option value="Maize" {% if (preselected_crop and preselected_crop|lower == 'maize') or (mapped_crop and mapped_crop == 'Maize') %}selected{% endif %}>🌽 Maize (Corn)</option>
+                            <option value="Barley" {% if (preselected_crop and preselected_crop|lower == 'barley') or (mapped_crop and mapped_crop == 'Barley') %}selected{% endif %}>🌾 Barley</option>
+                            <option value="Millets" {% if (preselected_crop and preselected_crop|lower == 'millets') or (mapped_crop and mapped_crop == 'Millets') %}selected{% endif %}>🌾 Millets (Bajra, Jowar, Ragi)</option>
+                            <option value="Pulses" {% if (preselected_crop and preselected_crop|lower in ['pulses', 'chickpea', 'lentil', 'blackgram', 'mungbean', 'kidneybeans', 'pigeonpeas', 'mothbeans']) or (mapped_crop and mapped_crop == 'Pulses') %}selected{% endif %}>🫘 Pulses (Chickpea, Lentil, Moong, Beans)</option>
+                            <option value="Ground Nuts" {% if (preselected_crop and preselected_crop|lower in ['ground nuts', 'groundnut']) or (mapped_crop and mapped_crop == 'Ground Nuts') %}selected{% endif %}>🥜 Ground Nuts (Peanuts)</option>
+                            <option value="Oil seeds" {% if (preselected_crop and preselected_crop|lower in ['oil seeds', 'oilseeds', 'coconut']) or (mapped_crop and mapped_crop == 'Oil seeds') %}selected{% endif %}>🌻 Oil seeds (Mustard, Soybean, Sunflower)</option>
+                            <option value="Cotton" {% if (preselected_crop and preselected_crop|lower == 'cotton') or (mapped_crop and mapped_crop == 'Cotton') %}selected{% endif %}>🌿 Cotton & Fibre Crops</option>
+                            <option value="Sugarcane" {% if (preselected_crop and preselected_crop|lower == 'sugarcane') or (mapped_crop and mapped_crop == 'Sugarcane') %}selected{% endif %}>🎋 Sugarcane</option>
+                            <option value="Tobacco" {% if (preselected_crop and preselected_crop|lower == 'tobacco') or (mapped_crop and mapped_crop == 'Tobacco') %}selected{% endif %}>🍂 Tobacco</option>
+                        {% endif %}
+                        {% if preselected_crop and mapped_crop and mapped_crop not in ['Paddy', 'Wheat', 'Maize', 'Barley', 'Millets', 'Pulses', 'Ground Nuts', 'Oil seeds', 'Cotton', 'Sugarcane', 'Tobacco'] %}
+                        <option value="{{ mapped_crop }}" selected>{{ preselected_crop|capitalize }}</option>
+                        {% endif %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="soilType">
+                        <i class="fas fa-mountain"></i> Soil Type
+                    </label>
+                    <select id="soilType" name="soilType" class="form-select" required>
+                        <option value="">Select Soil Type</option>
+                        <option value="Sandy">Sandy</option>
+                        <option value="Loamy">Loamy</option>
+                        <option value="Black">Black</option>
+                        <option value="Red">Red</option>
+                        <option value="Clayey">Clayey</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="moisture">
+                        <i class="fas fa-droplet"></i> Soil Moisture (%)
+                    </label>
+                    <div class="input-icon">
+                        <i class="fas fa-water"></i>
+                        <input type="number" id="moisture" name="moisture" class="form-input" 
+                               placeholder="Enter soil moisture (0-100%)" min="0" max="100" step="0.1" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary" id="analyzeBtn">
+                    <i class="fas fa-microscope"></i> Analyze & Recommend
+                </button>
+            </form>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsContainer" class="result-container hidden">
+            <div class="result-card">
+                <div class="fertilizer-image" id="fertilizerImage">
+                    <i class="fas fa-seedling"></i>
+                </div>
+                <h2 class="fertilizer-name" id="fertilizerName">-</h2>
+                
+
+
+                <div class="result-details">
+                    <div class="detail-item">
+                        <i class="fas fa-microscope"></i>
+                        <span class="detail-label">Fertilizer Type:</span>
+                        <span class="detail-value" id="fertilizerType">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="advice-card">
+                <h3><i class="fas fa-lightbulb"></i> Soil Health Analysis</h3>
+                <div class="advice-content" id="soilAdvice">
+                    <p>Analyzing soil conditions...</p>
+                </div>
+            </div>
+
+            <div class="guidelines-card">
+                <h3><i class="fas fa-clipboard-list"></i> Application Guidelines</h3>
+                <div class="guidelines-content">
+                    <div class="guideline-item">
+                        <i class="fas fa-clock"></i>
+                        <span>Apply fertilizer during early morning or late evening</span>
+                    </div>
+                    <div class="guideline-item">
+                        <i class="fas fa-tint"></i>
+                        <span>Ensure soil moisture is adequate before application</span>
+                    </div>
+                    <div class="guideline-item">
+                        <i class="fas fa-balance-scale"></i>
+                        <span>Follow manufacturer's recommended dosage</span>
+                    </div>
+                    <div class="guideline-item">
+                        <i class="fas fa-shower"></i>
+                        <span>Water the field after fertilizer application</span>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="btn-primary btn-chatbot-accent" style="margin-top: 1rem;" onclick="if(typeof toggleChat === 'function') toggleChat();">
+                <i class="fas fa-comments"></i> Ask CropPulse Assistant
+            </button>
+        </div>
+
+        <!-- Placeholder when no results -->
+        <div id="placeholderContainer" class="result-container" style="display: flex; align-items: center; justify-content: center; min-height: 400px;">
+            <div style="text-align: center; color: var(--medium-gray);">
+                <i class="fas fa-microscope" style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                <p style="font-size: 1.1rem;">Fill in the form and click "Analyze & Recommend" to see predictions</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/soil_health.js') }}"></script>
+{% endblock %}
