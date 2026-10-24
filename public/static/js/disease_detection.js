@@ -76,6 +76,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // 4. Drag and Drop Support
     setupDragAndDrop();
 
+    // Allow tapping on the empty preview box to select a leaf photo on mobile
+    const previewBoxContainer = document.getElementById('previewBoxContainer');
+    if (previewBoxContainer && fileInput) {
+        previewBoxContainer.addEventListener('click', (e) => {
+            if (!currentLeafFile && !e.target.closest('#btnRemoveImg')) {
+                fileInput.click();
+            }
+        });
+    }
+
     // 5. Detect Disease Button
     if (scanBtn) {
         scanBtn.addEventListener('click', performDiagnosis);

@@ -2,14 +2,32 @@
 // Handles navigation, mobile menu, and general UI interactions
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Mobile menu toggle
+    // Mobile menu toggle & interactions
     const mobileMenu = document.getElementById('mobile-menu');
     const navMenu = document.querySelector('.nav-menu');
 
+    function closeMobileNav() {
+        if (navMenu) navMenu.classList.remove('active');
+        if (mobileMenu) {
+            mobileMenu.classList.remove('active');
+            mobileMenu.setAttribute('aria-expanded', 'false');
+        }
+        document.body.classList.remove('mobile-nav-open');
+    }
+
     if (mobileMenu) {
-        mobileMenu.addEventListener('click', function() {
-            navMenu.classList.toggle('active');
-            mobileMenu.classList.toggle('active');
+        mobileMenu.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const willOpen = !navMenu.classList.contains('active');
+            navMenu.classList.toggle('active', willOpen);
+            mobileMenu.classList.toggle('active', willOpen);
+            mobileMenu.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+            document.body.classList.toggle('mobile-nav-open', willOpen);
+
+            // Mutual exclusion: close profile dropdown when opening hamburger
+            if (willOpen && typeof window.closeProfileDropdown === 'function') {
+                window.closeProfileDropdown();
+            }
         });
     }
 
@@ -17,14 +35,36 @@ document.addEventListener('DOMContentLoaded', function() {
     const navLinks = document.querySelectorAll('.nav-link');
     navLinks.forEach(link => {
         link.addEventListener('click', function() {
-            if (navMenu) {
-                navMenu.classList.remove('active');
-            }
-            if (mobileMenu) {
-                mobileMenu.classList.remove('active');
-            }
+            closeMobileNav();
         });
     });
+
+    // Close mobile menu when clicking outside navbar
+    document.addEventListener('click', function(e) {
+        if (navMenu && navMenu.classList.contains('active')) {
+            const navContainer = document.querySelector('.nav-container');
+            if (navContainer && !navContainer.contains(e.target)) {
+                closeMobileNav();
+            }
+        }
+    });
+
+    // Close mobile menu on Escape key press
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && navMenu && navMenu.classList.contains('active')) {
+            closeMobileNav();
+        }
+    });
+
+    // Clean up mobile drawer state if window is resized to desktop
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768 && navMenu && navMenu.classList.contains('active')) {
+            closeMobileNav();
+        }
+    });
+
+    // Expose close helper globally
+    window.closeMobileNav = closeMobileNav;
 
     // Smooth scroll for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {

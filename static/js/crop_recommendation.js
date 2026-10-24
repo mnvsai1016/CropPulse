@@ -128,6 +128,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if (data && data.success) {
                     displayResults(data.result);
+                    if (window.innerWidth <= 768 && resultsContainer) {
+                        resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
                 } else {
                     showError(data ? (data.error || 'An error occurred during prediction') : 'Prediction failed');
                 }

@@ -80,7 +80,7 @@
                     <div class="input-icon">
                         <i class="fas fa-map"></i>
                         <input type="number" id="area" name="area" class="form-input" 
-                               placeholder="Enter area in hectares" min="0.1" step="0.1" required>
+                               placeholder="Enter area in hectares" min="0.1" step="0.1" inputmode="decimal" required>
                     </div>
                 </div>
 
@@ -111,7 +111,7 @@
                     <div class="input-icon">
                         <i class="fas fa-rupee-sign"></i>
                         <input type="number" id="marketPrice" class="form-input" 
-                               placeholder="Enter market price" min="0" step="100">
+                               placeholder="Enter market price" min="0" step="100" inputmode="numeric">
                     </div>
                 </div>
                 <button type="button" class="btn-primary" id="calculateBtn" style="margin-top: 1rem;">
@@ -130,13 +130,13 @@
                 <i class="fas fa-microscope"></i> Get Soil & Fertilizer Advice for this Crop
             </button>
 
-            <button type="button" class="btn-primary btn-chatbot-accent" style="margin-top: 1rem;" onclick="if(typeof toggleChat === 'function') toggleChat();">
+            <button type="button" class="btn-primary btn-chatbot-accent" style="margin-top: 1rem; width: 100%;" onclick="if(typeof toggleChat === 'function') toggleChat();">
                 <i class="fas fa-comments"></i> Ask CropPulse Assistant
             </button>
         </div>
 
         <!-- Placeholder when no results -->
-        <div id="placeholderContainer" class="result-container" style="display: flex; align-items: center; justify-content: center; min-height: 400px;">
+        <div id="placeholderContainer" class="result-container placeholder-container" style="display: flex; align-items: center; justify-content: center; min-height: 400px;">
             <div style="text-align: center; color: var(--medium-gray);">
                 <i class="fas fa-chart-line" style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;"></i>
                 <p style="font-size: 1.1rem;">Fill in the form and click "Predict Yield" to see predictions</p>

@@ -26,7 +26,7 @@
                     <div class="input-icon">
                         <i class="fas fa-flask"></i>
                         <input type="number" id="n" name="n" class="form-input" 
-                               placeholder="Enter N value (0-200)" min="0" max="200" step="0.1" required>
+                               placeholder="Enter N value (0-200)" min="0" max="200" step="0.1" inputmode="decimal" required>
                     </div>
                 </div>
 
@@ -37,7 +37,7 @@
                     <div class="input-icon">
                         <i class="fas fa-flask"></i>
                         <input type="number" id="p" name="p" class="form-input" 
-                               placeholder="Enter P value (0-200)" min="0" max="200" step="0.1" required>
+                               placeholder="Enter P value (0-200)" min="0" max="200" step="0.1" inputmode="decimal" required>
                     </div>
                 </div>
 
@@ -48,7 +48,7 @@
                     <div class="input-icon">
                         <i class="fas fa-flask"></i>
                         <input type="number" id="k" name="k" class="form-input" 
-                               placeholder="Enter K value (0-200)" min="0" max="200" step="0.1" required>
+                               placeholder="Enter K value (0-200)" min="0" max="200" step="0.1" inputmode="decimal" required>
                     </div>
                 </div>
 
@@ -59,7 +59,7 @@
                     <div class="input-icon">
                         <i class="fas fa-temperature-high"></i>
                         <input type="number" id="temperature" name="temperature" class="form-input" 
-                               placeholder="Enter temperature" min="-10" max="50" step="0.1" required>
+                               placeholder="Enter temperature" min="-10" max="50" step="0.1" inputmode="decimal" required>
                     </div>
                 </div>
 
@@ -70,7 +70,7 @@
                     <div class="input-icon">
                         <i class="fas fa-water"></i>
                         <input type="number" id="humidity" name="humidity" class="form-input" 
-                               placeholder="Enter humidity (0-100)" min="0" max="100" step="0.1" required>
+                               placeholder="Enter humidity (0-100)" min="0" max="100" step="0.1" inputmode="decimal" required>
                     </div>
                 </div>
 
@@ -81,7 +81,7 @@
                     <div class="input-icon">
                         <i class="fas fa-flask"></i>
                         <input type="number" id="ph" name="ph" class="form-input" 
-                               placeholder="Enter pH (0-14)" min="0" max="14" step="0.1" required>
+                               placeholder="Enter pH (0-14)" min="0" max="14" step="0.1" inputmode="decimal" required>
                     </div>
                     <small style="color: var(--medium-gray); font-size: 0.85rem;">
                         Optimal range: 6.0 - 8.0
@@ -95,7 +95,7 @@
                     <div class="input-icon">
                         <i class="fas fa-cloud"></i>
                         <input type="number" id="rainfall" name="rainfall" class="form-input" 
-                               placeholder="Enter rainfall" min="0" step="0.1" required>
+                               placeholder="Enter rainfall" min="0" step="0.1" inputmode="decimal" required>
                     </div>
                 </div>
 
@@ -138,24 +138,22 @@
 
                 <button type="button"
                         id="predictYieldBtn"
-                        class="btn-primary"
-                        style="max-width: 280px; margin: 1.25rem auto var(--spacing-sm); display: block;"
+                        class="btn-primary btn-result-action"
+                        style="margin-top: 1.25rem;"
                         disabled>
                     <i class="fas fa-chart-line"></i> Predict Yield for this Crop
                 </button>
 
                 <button type="button"
                         id="getSoilHealthBtn"
-                        class="btn-primary"
-                        style="max-width: 280px; margin: 0 auto var(--spacing-sm); display: block;"
+                        class="btn-primary btn-result-action"
                         disabled>
                     <i class="fas fa-microscope"></i> Get Soil Health Analysis
                 </button>
 
                 <button type="button"
                         id="askChatbotBtn"
-                        class="btn-primary btn-chatbot-accent"
-                        style="max-width: 280px; margin: 0 auto; display: block;"
+                        class="btn-primary btn-chatbot-accent btn-result-action"
                         disabled
                         onclick="if(typeof toggleChat === 'function') toggleChat();">
                     <i class="fas fa-comments"></i> Ask CropPulse Assistant
@@ -164,7 +162,7 @@
         </div>
 
         <!-- Placeholder when no results -->
-        <div id="placeholderContainer" class="result-container" style="display: flex; align-items: center; justify-content: center; min-height: 400px;">
+        <div id="placeholderContainer" class="result-container placeholder-container" style="display: flex; align-items: center; justify-content: center; min-height: 400px;">
             <div style="text-align: center; color: var(--medium-gray);">
                 <i class="fas fa-seedling" style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;"></i>
                 <p style="font-size: 1.1rem;">Fill in the form and click "Analyze & Recommend" to see crop recommendations</p>

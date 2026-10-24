@@ -584,6 +584,12 @@ window.toggleProfileDropdown = function(event) {
     }
     const dropdown = document.getElementById('navProfileDropdown');
     if (!dropdown) return;
+
+    // Mutual exclusion: close mobile nav menu if open
+    if (typeof window.closeMobileNav === 'function') {
+        window.closeMobileNav();
+    }
+
     dropdown.classList.toggle('show');
 };
 

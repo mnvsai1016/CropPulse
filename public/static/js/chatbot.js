@@ -152,6 +152,13 @@ function loadConversation(sessionId) {
 
     renderHistorySidebar();
     restoreChatHistory();
+
+    if (window.innerWidth <= 768) {
+        const sidebar = document.getElementById('chat-sidebar');
+        const backdrop = document.getElementById('chat-sidebar-backdrop');
+        if (sidebar) sidebar.style.display = 'none';
+        if (backdrop) backdrop.classList.remove('active');
+    }
 }
 
 // Render sidebar with saved conversations
@@ -205,6 +212,13 @@ function startNewChat() {
     const body = document.getElementById('chat-body');
     if (body) body.innerHTML = '';
     appendMessage('bot', 'Hello! I am your CropPulse assistant. Ask me anything about crops, yield, soil health, or fertilizers.', false);
+
+    if (window.innerWidth <= 768) {
+        const sidebar = document.getElementById('chat-sidebar');
+        const backdrop = document.getElementById('chat-sidebar-backdrop');
+        if (sidebar) sidebar.style.display = 'none';
+        if (backdrop) backdrop.classList.remove('active');
+    }
 }
 
 // Reset chat UI and wipe local sessions on sign out / account switch
@@ -324,8 +338,17 @@ function toggleChat() {
     if (isOpen) {
         saveConversation();
         win.style.display = 'none';
+        document.body.classList.remove('croppulse-chat-active');
+        const backdrop = document.getElementById('chat-sidebar-backdrop');
+        if (backdrop) backdrop.classList.remove('active');
     } else {
         win.style.display = 'flex';
+        if (window.innerWidth <= 768) {
+            document.body.classList.add('croppulse-chat-active');
+            if (typeof window.closeMobileNav === 'function') {
+                window.closeMobileNav();
+            }
+        }
         restoreChatHistory();
         renderHistorySidebar();
         const input = document.getElementById('chat-input');
@@ -452,9 +475,16 @@ function clearChat() {
 
 function toggleHistorySidebar() {
     const sidebar = document.getElementById('chat-sidebar');
+    const backdrop = document.getElementById('chat-sidebar-backdrop');
     if (!sidebar) return;
     const isVisible = sidebar.style.display === 'flex';
-    sidebar.style.display = isVisible ? 'none' : 'flex';
+    if (isVisible) {
+        sidebar.style.display = 'none';
+        if (backdrop) backdrop.classList.remove('active');
+    } else {
+        sidebar.style.display = 'flex';
+        if (backdrop) backdrop.classList.add('active');
+    }
 }
 
 function dismissChatIntro() {
